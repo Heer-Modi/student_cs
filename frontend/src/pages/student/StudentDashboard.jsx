@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, CssBaseline, Toolbar, Drawer, List, Typography, Divider, IconButton } from '@mui/material';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import StudentHome from './StudentHome';
@@ -18,14 +19,17 @@ const StudentDashboard = () => {
   const toggleDrawer = () => setOpen(!open);
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column', minWidth: '100vh'}}>
       <CssBaseline />
-      <Header title="Student Dashboard" /> {/* Ensure the header displays correctly */}
+      {/* <h2 className={styles.dashboardHeader}>Student Dashboard</h2> */}
+      <Header title="Student Dashboard" open={open}/> {/*Ensure the header displays correctly*/}
       <Box sx={{ display: 'flex', flexGrow: 1 }}>
         <Drawer variant="permanent" open={open} sx={open ? styles.drawerStyled : styles.hideDrawer}>
           <Toolbar sx={styles.toolBarStyled}>
             <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon />
+              {
+                open ? <ChevronLeftIcon /> : <ChevronRightIcon />
+              }
             </IconButton>
           </Toolbar>
           <Divider />
@@ -89,4 +93,8 @@ const styles = {
       display: 'none',
     },
   },
+  dashboardHeader: {
+    width: '100vh',
+
+  }
 };

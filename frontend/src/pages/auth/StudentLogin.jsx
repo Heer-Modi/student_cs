@@ -28,7 +28,7 @@ const StudentLogin = () => {
         }
     };
 
-    // CSS styles (same as before)
+    // CSS styles 
     const containerStyle = {
         display: 'flex',
         flexDirection: 'column',

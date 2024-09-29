@@ -55,12 +55,14 @@ const styles = {
     color: 'white', // White text
     width: '240px',
     transition: 'width 0.3s ease',
+    overflow: 'hidden'
   },
   drawerClosed: {
     backgroundColor: '#1e3a8a', // Dark blue background
     color: 'white',
     width: '70px', // Minimized width
     transition: 'width 0.3s ease',
+    overflow: 'hidden'
   },
   icon: {
     color: 'white', // White icon color
