@@ -113,7 +113,7 @@ const TeacherLogin = () => {
                 {message && <p>{message}</p>} {/* Display welcome message */}
                 {error && <p>{error}</p>}
             </form>
-            <p style={textStyle}>Forgot Password?</p>
+            <p style={textStyle} onClick={() => navigate('/reset-password')}>Forgot Password?</p>
         </div>
     );
 };

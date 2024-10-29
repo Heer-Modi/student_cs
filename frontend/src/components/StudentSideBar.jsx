@@ -9,36 +9,40 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 const StudentSideBar = ({ open }) => {
   return (
     <List sx={open ? styles.drawerOpen : styles.drawerClosed}>
-      <ListItem button component={Link} to="/">
+      {/* Dashboard */}
+      <ListItem button component={Link} to="/student/dashboard" sx={styles.listItem}>
         <ListItemIcon>
           <HomeIcon sx={styles.icon} />
         </ListItemIcon>
-        <ListItemText primary="Home" sx={styles.text} />
+        <ListItemText primary="Dashboard" sx={styles.text} />
       </ListItem>
 
-      <ListItem button component={Link} to="/profile">
+      {/* Profile */}
+      <ListItem button component={Link} to="/student/profile" sx={styles.listItem}>
         <ListItemIcon>
           <PersonIcon sx={styles.icon} />
         </ListItemIcon>
         <ListItemText primary="Profile" sx={styles.text} />
       </ListItem>
 
-      <ListItem button component={Link} to="/complaints/add">
+      {/* Add Query */}
+      <ListItem button component={Link} to="/complaints/add" sx={styles.listItem}>
         <ListItemIcon>
           <ReportProblemIcon sx={styles.icon} />
         </ListItemIcon>
-        <ListItemText primary="Add Complaint" sx={styles.text} />
+        <ListItemText primary="Add Query" sx={styles.text} />
       </ListItem>
 
-      <ListItem button component={Link} to="/complaints/view">
+      {/* View Response */}
+      <ListItem button component={Link} to="/complaints/view" sx={styles.listItem}>
         <ListItemIcon>
           <ReportProblemIcon sx={styles.icon} />
         </ListItemIcon>
-        <ListItemText primary="View Complaints" sx={styles.text} />
+        <ListItemText primary="View Response" sx={styles.text} />
       </ListItem>
 
-      {/* Add Notification Menu */}
-      <ListItem button component={Link} to="/notifications">
+      {/* Notifications */}
+      <ListItem button component={Link} to="/notifications" sx={styles.listItem}>
         <ListItemIcon>
           <NotificationsIcon sx={styles.icon} />
         </ListItemIcon>
@@ -51,24 +55,35 @@ const StudentSideBar = ({ open }) => {
 // Styles
 const styles = {
   drawerOpen: {
-    backgroundColor: '#1e3a8a', // Dark blue background
-    color: 'white', // White text
+    backgroundColor: '#3f51b5', // Dark blue for sidebar
+    color: 'black', 
     width: '240px',
-    transition: 'width 0.3s ease',
-    overflow: 'hidden'
+    transition: 'width 0.3s ease', // Smooth transition
+     
+    paddingTop: '20px',
   },
   drawerClosed: {
-    backgroundColor: '#1e3a8a', // Dark blue background
-    color: 'white',
-    width: '70px', // Minimized width
-    transition: 'width 0.3s ease',
-    overflow: 'hidden'
+    backgroundColor: '#3f51b5', 
+    color: 'black',
+    width: '70px',
+    transition: 'width 0.3s ease', // Smooth transition when closed
+   
+    paddingTop: '20px',
   },
   icon: {
-    color: 'white', // White icon color
+    color: '#f6d673', // Yellow icon for emphasis
+    fontSize: '1.5rem',
   },
   text: {
-    color: 'white', // White text color
+    color: '#ffffff', // Light gray text for readability
+    fontWeight: 500,
+    transition: 'opacity 0.3s ease',
+  },
+  listItem: {
+    padding: '10px 20px',
+    '&:hover': {
+      backgroundColor: '#14305d', // Slightly lighter on hover
+    },
   },
 };
 

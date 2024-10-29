@@ -9,7 +9,7 @@ exports.protect = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;  // User info now available in req.user
+    req.user = decoded; // User info now available in req.user
     next();
   } catch (error) {
     res.status(401).json({ msg: 'Token is not valid' });

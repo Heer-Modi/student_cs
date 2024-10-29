@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Box, CssBaseline, Toolbar, Drawer, List, Typography, Divider, IconButton } from '@mui/material';
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Box, CssBaseline, Toolbar, Drawer, IconButton, Typography } from '@mui/material';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Header from '../../components/Header';
@@ -11,46 +11,60 @@ import ViewMeetings from './ViewMeetings';
 import ViewDocuments from './ViewDocuments';
 import ComplaintForm from '../../components/ComplaintForm';
 import ComplaintView from '../../components/ComplaintView';
-import StudentSideBar from '../../components/StudentSideBar'; // Assuming the custom sidebar component
+import StudentSideBar from '../../components/StudentSideBar';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
+
+const drawerWidth = 240; // Sidebar's full width
+const collapsedDrawerWidth = 70; // Sidebar's collapsed width
 
 const StudentDashboard = () => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(true); // Sidebar toggle state
+  const [date, setDate] = useState(new Date()); // Calendar date state
 
-  const toggleDrawer = () => setOpen(!open);
+  const toggleDrawer = () => setOpen(!open); // Toggle sidebar open/closed
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column', minWidth: '100vh'}}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column', backgroundColor: '#f6f7f9' }}>
       <CssBaseline />
-      {/* <h2 className={styles.dashboardHeader}>Student Dashboard</h2> */}
-      <Header title="Student Dashboard" open={open}/> {/*Ensure the header displays correctly*/}
+      <Header title="Student Dashboard" open={open} />
+      
       <Box sx={{ display: 'flex', flexGrow: 1 }}>
-        <Drawer variant="permanent" open={open} sx={open ? styles.drawerStyled : styles.hideDrawer}>
-          <Toolbar sx={styles.toolBarStyled}>
+        {/* Sidebar */}
+        <Drawer
+          variant="permanent"
+          sx={styles.drawerStyled(open)}
+        >
+          <Toolbar>
             <IconButton onClick={toggleDrawer}>
-              {
-                open ? <ChevronLeftIcon /> : <ChevronRightIcon />
-              }
+              {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
           </Toolbar>
-          <Divider />
-          <List component="nav">
-            <StudentSideBar open={open} /> {/* Pass the open prop to StudentSideBar */}
-          </List>
+          <StudentSideBar open={open} />
         </Drawer>
-        <Box component="main" sx={open ? styles.mainContent : styles.fullWidthContent}>
+
+        {/* Main content stays in place whether sidebar is open or closed */}
+        <Box component="main" sx={styles.mainContent}>
           <Toolbar />
-          <Typography variant="h4" sx={{ mb: 3 }}>
-            Welcome to the Dashboard
-          </Typography>
-          <Routes>
-            <Route path="/" element={<StudentHome />} />
-            <Route path="/profile" element={<StudentProfile />} />
-            <Route path="/meetings" element={<ViewMeetings />} />
-            <Route path="/documents" element={<ViewDocuments />} />
-            <Route path="/complaints/add" element={<ComplaintForm />} />
-            <Route path="/complaints/view" element={<ComplaintView />} />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box>
+              <Routes>
+                <Route path="/" element={<StudentHome />} />
+                <Route path="/profile" element={<StudentProfile />} />
+                <Route path="/meetings" element={<ViewMeetings />} />
+                <Route path="/documents" element={<ViewDocuments />} />
+                <Route path="/complaints/add" element={<ComplaintForm />} />
+                <Route path="/complaints/view" element={<ComplaintView />} />
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
+            </Box>
+
+            {/* Calendar Section */}
+            <Box sx={styles.calendarContainer}>
+              <Typography variant="h6" sx={{ color: '#10184b', mb: 2 }}>Your Calendar</Typography>
+              <Calendar onChange={setDate} value={date} />
+            </Box>
+          </Box>
         </Box>
       </Box>
       <Footer />
@@ -60,41 +74,31 @@ const StudentDashboard = () => {
 
 export default StudentDashboard;
 
+// Updated styles
 const styles = {
   mainContent: {
-    backgroundColor: 'white', // Set the background to white
     flexGrow: 1,
-    height: '100vh',
     padding: '24px',
-    overflow: 'auto',
+    backgroundColor: '#f6f7f9',
+    transition: 'margin-left 0.3s ease',
+    marginLeft: `${collapsedDrawerWidth}px`, // Fixed margin regardless of sidebar state
   },
-  fullWidthContent: {
-    backgroundColor: 'white', // Set the background to white
-    flexGrow: 1,
-    height: '100vh',
-    padding: '24px',
-    overflow: 'auto',
-    marginLeft: '50px', // No margin when sidebar is closed
-    justifyContent:'center',
-  },
-  toolBarStyled: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    px: [1],
-  },
-  drawerStyled: {
-    width: '240px',
-    flexShrink: 0,
-  },
-  hideDrawer: {
-    width: 0,
-    '@media (max-width: 600px)': {
-      display: 'none',
-    },
-  },
-  dashboardHeader: {
-    width: '100vh',
 
-  }
+  drawerStyled: (open) => ({
+    width: open ? drawerWidth : collapsedDrawerWidth,
+    flexShrink: 0,
+    '& .MuiDrawer-paper': {
+      width: open ? drawerWidth : collapsedDrawerWidth,
+      transition: 'width 0.3s ease',
+      
+      overflowX: 'hidden',
+    },
+  }),
+
+  calendarContainer: {
+    ml: 4,
+    backgroundColor: '#f6d673',
+    p: 3,
+    borderRadius: '8px',
+  },
 };

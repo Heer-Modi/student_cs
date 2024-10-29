@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -8,9 +9,11 @@ import StudentLogin from "./pages/auth/StudentLogin";
 import TeacherLogin from "./pages/auth/TeacherLogin";
 import AdminLogin from "./pages/auth/AdminLogin";
 import LoginRoleSelect from "./pages/auth/LoginRoleSelect";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 // Dashboard Pages
 import StudentDashboard from './pages/student/StudentDashboard';
+import StudentProfile from './pages/student/StudentProfile';
 
 // Common Components
 import ComplaintForm from './components/ComplaintForm';
@@ -22,45 +25,41 @@ import Footer from './components/Footer';
 
 function AppContent() {
   const location = useLocation();
+  // Initialize from localStorage and allow updates only on new uploads
+  const [profilePhoto, setProfilePhoto] = useState(localStorage.getItem('profilePhoto'));
 
-  // Define the paths where the Header and Footer should NOT be shown
-  const noHeaderFooterRoutes = ['/', '/login', '/login/student', '/login/teacher', '/login/admin','/student/dashboard'];
+  const refreshProfilePhoto = (newPhotoUrl) => {
+    // Update both localStorage and state only if a new photo URL is provided
+    if (newPhotoUrl) {
+      localStorage.setItem('profilePhoto', newPhotoUrl);
+      setProfilePhoto(newPhotoUrl);
+    }
+  };
 
-  // Check if the current route is in the list where the Header and Footer should be hidden
+  const noHeaderFooterRoutes = ['/', '/login', '/login/student', '/login/teacher', '/login/admin', '/student/dashboard', '/reset-password'];
   const showHeaderFooter = !noHeaderFooterRoutes.includes(location.pathname);
 
   return (
     <>
       <CssBaseline />
-      {/* Conditionally render Header */}
-      {showHeaderFooter && <Header />}
+      {showHeaderFooter && <Header profilePhoto={profilePhoto} />} {/* Pass the photo URL to Header */}
 
       <Routes>
-        {/* Registration and Login Routes */}
+        <Route path="/student/profile" element={<StudentProfile refreshProfilePhoto={refreshProfilePhoto} />} />
         <Route path="/" element={<Register />} />
         <Route path="/login" element={<LoginRoleSelect />} />
         <Route path="/login/student" element={<StudentLogin />} />
         <Route path="/login/teacher" element={<TeacherLogin />} />
         <Route path="/login/admin" element={<AdminLogin />} />
-
-        {/* Student Dashboard */}
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/student/dashboard" element={<StudentDashboard />} />
-
-        {/* Teacher and Admin Dashboards (you can add later) */}
-        {/* <Route path="/teacher/*" element={<TeacherDashboard />} /> */}
-        {/* <Route path="/admin/*" element={<AdminDashboard />} /> */}
-
-        {/* Common Components for All Roles */}
         <Route path="/complaints/add" element={<ComplaintForm />} />
         <Route path="/complaints/view" element={<ComplaintView />} />
         <Route path="/notifications" element={<Notification />} />
         <Route path="/logout" element={<Logout />} />
-
-        {/* Default Route */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
 
-      {/* Conditionally render Footer */}
       {showHeaderFooter && <Footer />}
     </>
   );

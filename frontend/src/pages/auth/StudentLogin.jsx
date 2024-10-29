@@ -13,7 +13,7 @@ const StudentLogin = () => {
         e.preventDefault();
         try {
             const response = await axios.post('/api/users/login/student', {
-                email, password, role: 'student' // Specify role as teacher
+                email, password, role: 'student' // Specify role as student
             });
 
             // Save JWT token in localStorage
@@ -21,7 +21,7 @@ const StudentLogin = () => {
 
             setMessage(response.data.message);
 
-            // Redirect to teacher dashboard
+            // Redirect to student dashboard
             setTimeout(() => navigate('/student/dashboard'), 2000);
         } catch (error) {
             setError(error.response ? error.response.data.message : 'Login failed');
@@ -112,7 +112,7 @@ const StudentLogin = () => {
                 {message && <p>{message}</p>} {/* Display welcome message */}
                 {error && <p>{error}</p>}
             </form>
-            <p style={textStyle}>Forgot Password?</p>
+            <p style={textStyle} onClick={() => navigate('/reset-password')}>Forgot Password?</p>
         </div>
     );
 };
