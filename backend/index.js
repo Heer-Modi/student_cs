@@ -6,6 +6,7 @@ require('dotenv').config();
 // Import routes
 const authRoutes = require('./routes/authRoutes');
 const studentRoutes = require('./routes/studentRoutes');
+const complaintRoutes = require('./routes/complaintRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes'); // Importing the new dashboard routes
@@ -29,6 +30,7 @@ app.use('/api/students', studentRoutes);
 app.use('/api/teachers', teacherRoutes);
 app.use('/api/admins', adminRoutes);
 app.use('/dashboard', dashboardRoutes); // Adding the dashboard routes
+app.use('/api/complaints', complaintRoutes); // Route prefix for complaints
 
 // Start server
 const PORT = process.env.PORT || 5000;
