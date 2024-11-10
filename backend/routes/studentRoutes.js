@@ -21,5 +21,6 @@ const upload = multer({ storage });
 
 // Route to save or update student profile with photo upload
 router.post('/profile', upload.single('photo'), studentController.saveStudentProfile);
+router.get('/profile', studentController.fetchStudentProfile);
 
 module.exports = router;

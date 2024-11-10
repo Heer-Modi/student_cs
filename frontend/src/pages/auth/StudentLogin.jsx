@@ -16,8 +16,11 @@ const StudentLogin = () => {
                 email, password, role: 'student' // Specify role as student
             });
 
+            const { token, user } = response.data;
+
             // Save JWT token in localStorage
-            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(user));
 
             setMessage(response.data.message);
 
