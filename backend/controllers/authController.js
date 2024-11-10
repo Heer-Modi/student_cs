@@ -5,6 +5,15 @@ const jwt = require('jsonwebtoken');
 // Registration logic
 exports.register = async (req, res) => {
     const { name, email, password, role } = req.body;
+    firstName = '';
+    middleName = '';
+    lastName = '';
+    Class = '';
+    parentsName = '';
+    parentsPhone = '';
+    address = '';
+    phone = '';
+    photo = '';
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
@@ -12,6 +21,15 @@ exports.register = async (req, res) => {
             email,
             password: hashedPassword,
             role, // role can be 'student', 'teacher', or 'admin'
+            firstName,
+            middleName,
+            lastName,
+            Class,
+            parentsName,
+            parentsPhone,
+            address,
+            phone,
+            photo,
         });
         await newUser.save();
         res.status(201).json({ message: 'User registered successfully' });
@@ -48,11 +66,7 @@ exports.loginWithEmail = async (req, res, role) => {
         res.status(200).json({
             message: `Welcome back, ${user.name}!`,
             token,
-            user: {
-                id: user._id,
-                name: user.name,
-                role: user.role
-            }
+            user
         });
     } catch (error) {
         console.error('Error logging in:', error);
