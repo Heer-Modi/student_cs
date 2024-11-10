@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User'); 
 
-exports.protect = (req, res, next) => {
+// Middleware to verify and attach user info from token
+exports.protect = async (req, res, next) => {
   const token = req.header('Authorization')?.split(' ')[1];
 
   if (!token) {
@@ -9,14 +11,17 @@ exports.protect = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // User info now available in req.user
+    req.user = await User.findById(decoded.id).select('-password'); // Fetch user from DB, exclude password
+    if (!req.user) {
+      return res.status(401).json({ msg: 'User not found, authorization denied' });
+    }
     next();
   } catch (error) {
     res.status(401).json({ msg: 'Token is not valid' });
   }
 };
 
-// Middleware to check user role
+// Middleware to check if user has one of the specified roles
 exports.checkRole = (roles) => (req, res, next) => {
   if (!roles.includes(req.user.role)) {
     return res.status(403).json({ msg: 'Access denied: Insufficient role' });

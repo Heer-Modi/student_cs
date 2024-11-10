@@ -11,14 +11,24 @@ import AdminLogin from "./pages/auth/AdminLogin";
 import LoginRoleSelect from "./pages/auth/LoginRoleSelect";
 import ResetPassword from "./pages/auth/ResetPassword";
 
+
+
 // Dashboard Pages
 import StudentDashboard from './pages/student/StudentDashboard';
 import StudentProfile from './pages/student/StudentProfile';
+import TeacherDashboard from './pages/teacher/TeacherDashboard';
+import TeacherProfile from './pages/teacher/TeacherProfile';
 
 // Common Components
 import ComplaintForm from './components/ComplaintForm';
 import ComplaintView from './components/ComplaintView';
 import Notification from './components/Notification';
+import TeacherNotifications from './components/TeacherNotifications';
+import TeacherAttendance from './pages/teacher/TeacherAttendance';
+import TeacherQueries from './pages/teacher/TeacherQueries';
+import ArrangeMeetingsPage from './pages/teacher/ArrangeMeetingsPage';
+import UploadDocumentsPage from './pages/teacher/UploadDocumentsPage';
+import CreateGoogleFormPage from './pages/teacher/CreateGoogleFormPage';
 import Logout from './pages/auth/Logout';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -36,7 +46,7 @@ function AppContent() {
     }
   };
 
-  const noHeaderFooterRoutes = ['/', '/login', '/login/student', '/login/teacher', '/login/admin', '/student/dashboard', '/reset-password'];
+  const noHeaderFooterRoutes = ['/', '/login', '/login/student', '/login/teacher', '/login/admin', '/student/dashboard', '/reset-password', '/teacher/dashboard'];
   const showHeaderFooter = !noHeaderFooterRoutes.includes(location.pathname);
 
   return (
@@ -53,9 +63,17 @@ function AppContent() {
         <Route path="/login/admin" element={<AdminLogin />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/student/dashboard" element={<StudentDashboard />} />
+        <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+        <Route path="/teacher/dashboard/arrange-meetings" element={<ArrangeMeetingsPage />} />
+        <Route path="/teacher/dashboard/upload-documents" element={<UploadDocumentsPage />} />
+        <Route path="/teacher/dashboard/create-google-form" element={<CreateGoogleFormPage />} />
         <Route path="/complaints/add" element={<ComplaintForm />} />
         <Route path="/complaints/view" element={<ComplaintView />} />
         <Route path="/notifications" element={<Notification />} />
+        <Route path="/teacher/dashboard/profile" element={<TeacherProfile />} />
+        <Route path="/teacher/dashboard/notifications" element={<TeacherNotifications />} />
+        <Route path="/teacher/dashboard/attendance" element={<TeacherAttendance />} />
+        <Route path="/teacher/dashboard/queries" element={<TeacherQueries />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
