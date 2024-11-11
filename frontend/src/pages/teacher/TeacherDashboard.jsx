@@ -1,3 +1,4 @@
+// TeacherDashboard.jsx
 import React, { useState } from 'react';
 import { Box, CssBaseline, Toolbar, Drawer, IconButton, Typography } from '@mui/material';
 import { Routes, Route, Navigate } from 'react-router-dom';
@@ -14,8 +15,8 @@ import TeacherSideBar from '../../components/TeacherSidebar';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
-const drawerWidth = 240;
-const collapsedDrawerWidth = 70;
+const drawerWidth = 240; // Sidebar full width
+const collapsedDrawerWidth = 70; // Sidebar collapsed width
 
 const TeacherDashboard = () => {
   const [open, setOpen] = useState(true); // Sidebar toggle state
@@ -30,10 +31,7 @@ const TeacherDashboard = () => {
       
       <Box sx={{ display: 'flex', flexGrow: 1 }}>
         {/* Sidebar */}
-        <Drawer
-          variant="permanent"
-          sx={styles.drawerStyled(open)}
-        >
+        <Drawer variant="permanent" sx={styles.drawerStyled(open)}>
           <Toolbar>
             <IconButton onClick={toggleDrawer}>
               {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}

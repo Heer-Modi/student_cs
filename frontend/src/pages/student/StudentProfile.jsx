@@ -27,10 +27,8 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user")); // Parse the string into an object
     if (user) setProfile(user);
-    console.log(user);
   }, []);
 
-  // Destructure the profile object for easier use
   const {
     firstName = "",
     middleName = "",
@@ -45,11 +43,12 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (
-      (name === "phone" || name === "parentsPhone") &&
-      (value.length > 10 || isNaN(value))
-    )
+
+    // Only allow numbers and max length of 10 for phone and parentsPhone fields
+    if ((name === "phone" || name === "parentsPhone") && (!/^\d*$/.test(value) || value.length > 10)) {
       return;
+    }
+    
     setProfile({ ...profile, [name]: value });
   };
 
@@ -63,18 +62,22 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (profile.phone === profile.parentsPhone) {
       alert("Phone number and parent's phone number can't be the same.");
       return;
     }
 
-    const { _id } = profile;
+    if (profile.phone.length !== 10 || profile.parentsPhone.length !== 10) {
+      alert("Phone numbers must be exactly 10 digits.");
+      return;
+    }
 
+    const { _id } = profile;
     const formData = new FormData();
     for (const key in profile) {
       formData.append(key, profile[key]);
     }
-
     formData.append("_id", _id);
 
     try {
@@ -83,7 +86,6 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
       });
 
       if (response.data?.student?.photo) {
-        // const newPhotoUrl = `${response.data.student.photo}`;
         const newPhotoUrl = `${response.data.student.photo}`;
         localStorage.setItem("profilePhoto", newPhotoUrl);
         setPhotoUrl(newPhotoUrl);
@@ -221,12 +223,7 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
                 />
                 <label htmlFor="photo-upload">
                   {photo ? (
-                    <img
-                      // src={URL.createObjectURL(photo)}
-                      src={photoUrl}
-                      alt="Profile"
-                      style={styles.photo}
-                    />
+                    <img src={photoUrl} alt="Profile" style={styles.photo} />
                   ) : (
                     <PersonIcon style={styles.profileIcon} />
                   )}
@@ -271,6 +268,8 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
                   onChange={handleChange}
                   style={styles.input}
                   required
+                  pattern="\d{10}"
+                  title="Must be exactly 10 digits"
                 />
               </div>
 
@@ -292,6 +291,8 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
                   onChange={handleChange}
                   style={styles.input}
                   required
+                  pattern="\d{10}"
+                  title="Must be exactly 10 digits"
                 />
               </div>
 
