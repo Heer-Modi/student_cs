@@ -16,6 +16,9 @@ const userSchema = new mongoose.Schema({
     address: { type: String },
     phone: { type: String},
     photo: { type: String },
+    designation: {type: String},
+    email: {type: String},
+    department: {type: String},
 });
 
 // Check if the model already exists to avoid OverwriteModelError

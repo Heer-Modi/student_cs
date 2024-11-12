@@ -20,7 +20,7 @@ const TeacherSideBar = ({ open }) => {
       </ListItem>
 
       {/* Profile */}
-      <ListItem button component={Link} to="/teacher/dashboard/profile" sx={styles.listItem}>
+      <ListItem button component={Link} to="/teacher/profile" sx={styles.listItem}>
         <ListItemIcon>
           <PersonIcon sx={styles.icon} />
         </ListItemIcon>
@@ -28,7 +28,7 @@ const TeacherSideBar = ({ open }) => {
       </ListItem>
 
       {/* Notifications */}
-      <ListItem button component={Link} to="/teacher/dashboard/notifications" sx={styles.listItem}>
+      <ListItem button component={Link} to="/teacher/notifications" sx={styles.listItem}>
         <ListItemIcon>
           <NotificationsIcon sx={styles.icon} />
         </ListItemIcon>
@@ -36,7 +36,7 @@ const TeacherSideBar = ({ open }) => {
       </ListItem>
 
       {/* Attendance */}
-      <ListItem button component={Link} to="/teacher/dashboard/attendance" sx={styles.listItem}>
+      <ListItem button component={Link} to="/teacher/attendance" sx={styles.listItem}>
         <ListItemIcon>
           <CalendarTodayIcon sx={styles.icon} />
         </ListItemIcon>
@@ -44,7 +44,7 @@ const TeacherSideBar = ({ open }) => {
       </ListItem>
 
       {/* View Queries */}
-      <ListItem button component={Link} to="/teacher/dashboard/queries" sx={styles.listItem}>
+      <ListItem button component={Link} to="/teacher/queries" sx={styles.listItem}>
         <ListItemIcon>
           <ReportProblemIcon sx={styles.icon} />
         </ListItemIcon>

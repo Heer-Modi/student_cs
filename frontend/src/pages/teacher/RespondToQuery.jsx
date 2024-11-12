@@ -1,20 +1,24 @@
-import React from 'react';
-import { Box, Typography, List, ListItem, ListItemText, Button, CssBaseline, Toolbar, Drawer, IconButton } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Typography, TextField, Button, CssBaseline, Toolbar, Drawer, IconButton } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import TeacherSideBar from '../../components/TeacherSidebar';
 
 const drawerWidth = 240;
 
-const TeacherQueries = () => {
-  const [open, setOpen] = React.useState(true);
+const RespondToQuery = () => {
+  const [open, setOpen] = useState(true);
+  const [response, setResponse] = useState('');
+  const { queryId } = useParams(); // Retrieve the query ID from the URL
   const navigate = useNavigate();
 
   const toggleDrawer = () => setOpen(!open);
 
-  const handleRespondClick = (queryId) => {
-    navigate(`/teacher/respond/${queryId}`); // Navigate to respond page with query ID
+  const handleResponseSubmit = () => {
+    console.log(`Response to Query ${queryId}:`, response);
+    alert('Response submitted successfully');
+    navigate('/teacher/queries'); // Navigate back to the queries list
   };
 
   const styles = {
@@ -27,19 +31,10 @@ const TeacherQueries = () => {
       borderRadius: '10px',
       boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
     },
-    listItem: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      backgroundColor: '#e3f2fd',
-      margin: '10px 0',
-      padding: '15px',
-      borderRadius: '8px',
-      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-    },
     button: {
       backgroundColor: '#3f51b5',
       color: '#fff',
+      marginTop: '20px',
       '&:hover': {
         backgroundColor: '#303f9f',
       },
@@ -77,28 +72,31 @@ const TeacherQueries = () => {
       <Box component="main" sx={styles.mainContent}>
         <Toolbar />
         <div style={styles.container}>
-          <Typography variant="h4" gutterBottom>Student Queries</Typography>
-          <List>
-            {[
-              { id: 1, text: 'Assistance needed with assignment.' },
-              { id: 2, text: 'Clarification on topic covered last class.' },
-            ].map((query) => (
-              <ListItem key={query.id} style={styles.listItem}>
-                <ListItemText primary={`Query: ${query.text}`} />
-                <Button
-                  variant="contained"
-                  sx={styles.button}
-                  onClick={() => handleRespondClick(query.id)}
-                >
-                  Respond
-                </Button>
-              </ListItem>
-            ))}
-          </List>
+          <Typography variant="h4" gutterBottom>Respond to Query</Typography>
+          <Typography variant="body1" gutterBottom>
+            Query ID: {queryId}
+          </Typography>
+          <TextField
+            label="Your Response"
+            multiline
+            rows={4}
+            value={response}
+            onChange={(e) => setResponse(e.target.value)}
+            fullWidth
+            variant="outlined"
+            sx={{ mt: 2 }}
+          />
+          <Button
+            variant="contained"
+            sx={styles.button}
+            onClick={handleResponseSubmit}
+          >
+            Submit Response
+          </Button>
         </div>
       </Box>
     </Box>
   );
 };
 
-export default TeacherQueries;
+export default RespondToQuery;

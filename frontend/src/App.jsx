@@ -11,8 +11,6 @@ import AdminLogin from "./pages/auth/AdminLogin";
 import LoginRoleSelect from "./pages/auth/LoginRoleSelect";
 import ResetPassword from "./pages/auth/ResetPassword";
 
-
-
 // Dashboard Pages
 import StudentDashboard from './pages/student/StudentDashboard';
 import StudentProfile from './pages/student/StudentProfile';
@@ -32,6 +30,7 @@ import CreateGoogleFormPage from './pages/teacher/CreateGoogleFormPage';
 import Logout from './pages/auth/Logout';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import TeacherHeader from './components/TeacherHeader';
 
 function AppContent() {
   const location = useLocation();
@@ -46,13 +45,40 @@ function AppContent() {
     }
   };
 
-  const noHeaderFooterRoutes = ['/', '/login', '/login/student', '/login/teacher', '/login/admin', '/student/dashboard', '/reset-password', '/teacher/dashboard'];
+  // Define teacher-specific routes
+  const teacherRoutes = [
+    '/teacher/dashboard', 
+    '/teacher/arrange-meetings',
+    '/teacher/upload-documents', 
+    '/teacher/create-google-form', 
+    '/teacher/profile', 
+    '/teacher/notifications', 
+    '/teacher/attendance', 
+    '/teacher/queries'
+  ];
+
+  const noHeaderFooterRoutes = [
+    '/', 
+    '/login', 
+    '/login/student', 
+    '/login/teacher', 
+    '/login/admin', 
+    '/student/dashboard', 
+    '/reset-password', 
+    '/teacher/dashboard'
+  ];
+  
+  // Check if the current path is in teacher routes
+  const showTeacherHeader = teacherRoutes.includes(location.pathname);
   const showHeaderFooter = !noHeaderFooterRoutes.includes(location.pathname);
 
   return (
     <>
       <CssBaseline />
-      {showHeaderFooter && <Header profilePhoto={profilePhoto} />} {/* Pass the photo URL to Header */}
+      {/* Conditionally render TeacherHeader or Header based on route */}
+      {showHeaderFooter && (showTeacherHeader ? 
+        <TeacherHeader profilePhoto={profilePhoto} /> : 
+        <Header profilePhoto={profilePhoto} />)}
 
       <Routes>
         <Route path="/student/profile" element={<StudentProfile refreshProfilePhoto={refreshProfilePhoto} />} />
@@ -64,16 +90,16 @@ function AppContent() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/student/dashboard" element={<StudentDashboard />} />
         <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
-        <Route path="/teacher/dashboard/arrange-meetings" element={<ArrangeMeetingsPage />} />
-        <Route path="/teacher/dashboard/upload-documents" element={<UploadDocumentsPage />} />
-        <Route path="/teacher/dashboard/create-google-form" element={<CreateGoogleFormPage />} />
+        <Route path="/teacher/arrange-meetings" element={<ArrangeMeetingsPage />} />
+        <Route path="/teacher/upload-documents" element={<UploadDocumentsPage />} />
+        <Route path="/teacher/create-google-form" element={<CreateGoogleFormPage />} />
         <Route path="/complaints/add" element={<ComplaintForm />} />
         <Route path="/complaints/view" element={<ComplaintView />} />
         <Route path="/notifications" element={<Notification />} />
-        <Route path="/teacher/dashboard/profile" element={<TeacherProfile />} />
-        <Route path="/teacher/dashboard/notifications" element={<TeacherNotifications />} />
-        <Route path="/teacher/dashboard/attendance" element={<TeacherAttendance />} />
-        <Route path="/teacher/dashboard/queries" element={<TeacherQueries />} />
+        <Route path="/teacher/profile" element={<TeacherProfile />} />
+        <Route path="/teacher/notifications" element={<TeacherNotifications />} />
+        <Route path="/teacher/attendance" element={<TeacherAttendance />} />
+        <Route path="/teacher/queries" element={<TeacherQueries />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

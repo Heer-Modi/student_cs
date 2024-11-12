@@ -4,7 +4,7 @@ import { Box, CssBaseline, Toolbar, Drawer, IconButton, Typography } from '@mui/
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import Header from '../../components/Header';
+import TeacherHeader from '../../components/TeacherHeader';
 import Footer from '../../components/Footer';
 import TeacherHome from './TeacherHome';
 import TeacherProfile from './TeacherProfile';
@@ -27,7 +27,7 @@ const TeacherDashboard = () => {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column', backgroundColor: '#f6f7f9' }}>
       <CssBaseline />
-      <Header title="Teacher Dashboard" open={open} />
+      <TeacherHeader title="Teacher Dashboard" open={open} /> {/* Use TeacherHeader here */}
       
       <Box sx={{ display: 'flex', flexGrow: 1 }}>
         {/* Sidebar */}

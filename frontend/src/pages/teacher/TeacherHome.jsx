@@ -57,7 +57,7 @@ const TeacherHomePage = () => {
         </CardContent>
         <Button
           component={Link}
-          to="/teacher/dashboard/arrange-meetings"
+          to="/teacher/arrange-meetings"
           sx={styles.buttonText}
         >
           Go
@@ -73,7 +73,7 @@ const TeacherHomePage = () => {
         </CardContent>
         <Button
           component={Link}
-          to="/teacher/dashboard/upload-documents"
+          to="/teacher/upload-documents"
           sx={styles.buttonText}
         >
           Go
@@ -89,7 +89,7 @@ const TeacherHomePage = () => {
         </CardContent>
         <Button
           component={Link}
-          to="/teacher/dashboard/create-google-form"
+          to="/teacher/create-google-form"
           sx={styles.buttonText}
         >
           Go
