@@ -1,20 +1,44 @@
-import React from 'react';
-import { Box, Typography, List, ListItem, ListItemText, Button, CssBaseline, Toolbar, Drawer, IconButton } from '@mui/material';
+import React, { useState } from 'react';
+import {
+  Box,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Button,
+  TextField,
+  CssBaseline,
+  Toolbar,
+  Drawer,
+  IconButton
+} from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { useNavigate } from 'react-router-dom';
 import TeacherSideBar from '../../components/TeacherSidebar';
 
 const drawerWidth = 240;
 
 const TeacherQueries = () => {
-  const [open, setOpen] = React.useState(true);
-  const navigate = useNavigate();
+  const [open, setOpen] = useState(true);
+  const [queries, setQueries] = useState([
+    { id: 1, text: 'Assistance needed with assignment.' },
+    { id: 2, text: 'Clarification on topic covered last class.' },
+  ]);
+  const [activeQueryId, setActiveQueryId] = useState(null);
+  const [responseText, setResponseText] = useState('');
 
   const toggleDrawer = () => setOpen(!open);
 
+  // Show response form for the selected query
   const handleRespondClick = (queryId) => {
-    navigate(`/teacher/respond/${queryId}`); // Navigate to respond page with query ID
+    setActiveQueryId(queryId);
+  };
+
+  // Handle submitting a response
+  const handleSubmitResponse = (queryId) => {
+    setQueries(queries.filter((query) => query.id !== queryId)); // Remove query from list
+    setActiveQueryId(null); // Close response form
+    setResponseText(''); // Clear response text
   };
 
   const styles = {
@@ -26,23 +50,42 @@ const TeacherQueries = () => {
       backgroundColor: '#f5f7fb',
       borderRadius: '10px',
       boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+      textAlign: 'center', // Center-align heading
+    },
+    heading: {
+      color: '#2a9d8f', // Green color for heading
+      marginBottom: '20px',
+      fontSize: '24px',
+      fontWeight: '600',
     },
     listItem: {
       display: 'flex',
+      flexDirection: 'column',
       justifyContent: 'space-between',
-      alignItems: 'center',
+      alignItems: 'start',
       backgroundColor: '#e3f2fd',
       margin: '10px 0',
       padding: '15px',
       borderRadius: '8px',
+      border: '2px solid #f6d673', // Yellow border
       boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
     },
     button: {
-      backgroundColor: '#3f51b5',
+      backgroundColor: '#2a9d8f', // Green color for button
       color: '#fff',
+      alignSelf: 'flex-end',
       '&:hover': {
-        backgroundColor: '#303f9f',
+        backgroundColor: '#21867a',
       },
+      marginTop: '10px',
+    },
+    responseContainer: {
+      marginTop: '10px',
+      padding: '10px',
+      borderRadius: '8px',
+      backgroundColor: '#fff',
+      boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.15)',
+      width: '100%',
     },
     mainContent: {
       flexGrow: 1,
@@ -77,12 +120,11 @@ const TeacherQueries = () => {
       <Box component="main" sx={styles.mainContent}>
         <Toolbar />
         <div style={styles.container}>
-          <Typography variant="h4" gutterBottom>Student Queries</Typography>
+          <Typography variant="h4" style={styles.heading}>
+            Student Queries
+          </Typography>
           <List>
-            {[
-              { id: 1, text: 'Assistance needed with assignment.' },
-              { id: 2, text: 'Clarification on topic covered last class.' },
-            ].map((query) => (
+            {queries.map((query) => (
               <ListItem key={query.id} style={styles.listItem}>
                 <ListItemText primary={`Query: ${query.text}`} />
                 <Button
@@ -92,6 +134,27 @@ const TeacherQueries = () => {
                 >
                   Respond
                 </Button>
+
+                {/* Show response container if this query is active */}
+                {activeQueryId === query.id && (
+                  <Box sx={styles.responseContainer}>
+                    <TextField
+                      label="Write your response"
+                      multiline
+                      rows={3}
+                      value={responseText}
+                      onChange={(e) => setResponseText(e.target.value)}
+                      fullWidth
+                    />
+                    <Button
+                      variant="contained"
+                      sx={{ ...styles.button, marginTop: '10px' }}
+                      onClick={() => handleSubmitResponse(query.id)}
+                    >
+                      Submit Response
+                    </Button>
+                  </Box>
+                )}
               </ListItem>
             ))}
           </List>

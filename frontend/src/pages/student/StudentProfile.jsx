@@ -312,7 +312,7 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
                   Save Profile
                 </button>
                 <button onClick={handleCancelEditing} style={styles.button}>
-                  Cancel
+                  Update
                 </button>
               </div>
             </form>
