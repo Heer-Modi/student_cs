@@ -1,4 +1,3 @@
-// TeacherAttendance.jsx
 import React, { useState } from "react";
 import {
   Box,
@@ -14,11 +13,21 @@ import {
   CssBaseline,
   Toolbar,
   Drawer,
-  IconButton
+  IconButton,
+  Collapse,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TeacherSideBar from "../../components/TeacherSidebar";
+import CustomPieChart from "../../components/CustomPieChart";
+import { calculateAttendancePercentages } from "../../components/attendanceUtils"; // Utility file
 
 const drawerWidth = 240;
 
@@ -28,61 +37,54 @@ const TeacherAttendance = () => {
   const [date, setDate] = useState("");
   const [studentId, setStudentId] = useState("");
   const [students, setStudents] = useState([]);
-
+  const [openDetails, setOpenDetails] = useState({});
+  
   const toggleDrawer = () => setOpen(!open);
 
   const handleAddStudent = () => {
     if (studentId.trim()) {
-      setStudents([...students, { studentId, status: "Present" }]);
+      setStudents([...students, { studentId, status: "Present", attendanceDetails: [] }]);
       setStudentId("");
     }
   };
 
   const handleAttendanceChange = (id, status) => {
-    setStudents(students.map((s) => (s.studentId === id ? { ...s, status } : s)));
+    setStudents(
+      students.map((student) =>
+        student.studentId === id ? { ...student, status } : student
+      )
+    );
   };
 
   const handleSaveAttendance = async () => {
-    // Add backend save logic here
     alert("Attendance saved successfully!");
+  };
+
+  const toggleDetails = (studentId) => {
+    setOpenDetails((prevState) => ({
+      ...prevState,
+      [studentId]: !prevState[studentId],
+    }));
   };
 
   const styles = {
     container: {
       margin: "0 auto",
       maxWidth: "700px",
+      width: "90%",
       padding: "40px",
       backgroundColor: "#f5f7fb",
       borderRadius: "10px",
       boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
       textAlign: "center",
     },
-    heading: {
-      color: "#2a9d8f",
-      marginBottom: "20px",
-      fontSize: "24px",
-      fontWeight: "600",
-    },
-    listItem: {
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "space-between",
-      alignItems: "start",
-      backgroundColor: "#e3f2fd",
-      margin: "10px 0",
-      padding: "15px",
-      borderRadius: "8px",
-      border: "2px solid #f6d673",
-      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-    },
     button: {
-      backgroundColor: "#2a9d8f",
+      backgroundColor: "#3f51b5",
       color: "#fff",
-      alignSelf: "flex-end",
+      marginTop: "20px",
       "&:hover": {
-        backgroundColor: "#21867a",
+        backgroundColor: "#303f9f",
       },
-      marginTop: "10px",
     },
     mainContent: {
       flexGrow: 1,
@@ -100,12 +102,25 @@ const TeacherAttendance = () => {
         overflowX: "hidden",
       },
     },
+    listItem: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      alignItems: "start",
+      backgroundColor: "#e3f2fd",
+      margin: "10px 0",
+      padding: "15px",
+      borderRadius: "8px",
+      border: "2px solid #f6d673",
+      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+    },
   };
+
+  const overallAttendance = calculateAttendancePercentages(students);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <CssBaseline />
-
       <Drawer variant="permanent" sx={styles.drawerStyled}>
         <Toolbar>
           <IconButton onClick={toggleDrawer}>
@@ -118,10 +133,8 @@ const TeacherAttendance = () => {
       <Box component="main" sx={styles.mainContent}>
         <Toolbar />
         <div style={styles.container}>
-          <Typography variant="h4" style={styles.heading}>
-            Attendance
-          </Typography>
-
+          <Typography variant="h4" gutterBottom>Attendance</Typography>
+          
           <TextField
             label="Class Name"
             value={className}
@@ -138,22 +151,20 @@ const TeacherAttendance = () => {
             sx={{ marginBottom: 2 }}
             InputLabelProps={{ shrink: true }}
           />
+          <TextField
+            label="Student ID"
+            value={studentId}
+            onChange={(e) => setStudentId(e.target.value)}
+            fullWidth
+            sx={{ marginBottom: 2 }}
+          />
+          <Button variant="contained" onClick={handleAddStudent} sx={styles.button}>
+            Add Student
+          </Button>
 
-          <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-            <TextField
-              label="Student ID"
-              value={studentId}
-              onChange={(e) => setStudentId(e.target.value)}
-              fullWidth
-            />
-            <Button variant="contained" sx={styles.button} onClick={handleAddStudent}>
-              Add Student
-            </Button>
-          </div>
-
-          <List>
-            {students.map((student) => (
-              <ListItem key={student.studentId} style={styles.listItem}>
+          <List sx={{ marginTop: 2 }}>
+            {students.map((student, index) => (
+              <ListItem key={index} disableGutters style={styles.listItem}>
                 <ListItemText primary={`Student ID: ${student.studentId}`} />
                 <RadioGroup
                   row
@@ -163,13 +174,46 @@ const TeacherAttendance = () => {
                   <FormControlLabel value="Present" control={<Radio />} label="Present" />
                   <FormControlLabel value="Absent" control={<Radio />} label="Absent" />
                 </RadioGroup>
+                <IconButton onClick={() => toggleDetails(student.studentId)}>
+                  {openDetails[student.studentId] ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                </IconButton>
+                <Collapse in={openDetails[student.studentId]} timeout="auto" unmountOnExit>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Date</TableCell>
+                        <TableCell align="right">Status</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {student.attendanceDetails.map((attendance, idx) => (
+                        <TableRow key={idx}>
+                          <TableCell>{attendance.date}</TableCell>
+                          <TableCell align="right">{attendance.status}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Collapse>
               </ListItem>
             ))}
           </List>
 
-          <Button variant="contained" sx={{ ...styles.button, marginTop: "20px" }} onClick={handleSaveAttendance}>
+          <Button
+            variant="contained"
+            onClick={handleSaveAttendance}
+            sx={{ ...styles.button, marginTop: 2 }}
+          >
             Save Attendance
           </Button>
+
+          <Box sx={{ marginTop: 3 }}>
+            <Typography variant="h6">Overall Attendance</Typography>
+            <CustomPieChart data={[
+              { name: "Present", value: overallAttendance.present },
+              { name: "Absent", value: overallAttendance.absent },
+            ]} />
+          </Box>
         </div>
       </Box>
     </Box>
