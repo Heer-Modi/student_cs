@@ -39,7 +39,10 @@ exports.saveStudentProfile = async (req, res) => {
 
 exports.fetchStudentProfile = async (req, res) => {
     try {
-        const student = await Student.findOne({ phone: req.body.email });
+        const student = await Student.findOne({ _id: req.user.id });
+        if (!student) {
+            return res.status(404).json({ message: 'Student profile not found' });
+        }
         res.status(200).json({ student });
     } catch (error) {
         console.error('Error fetching student profile:', error);

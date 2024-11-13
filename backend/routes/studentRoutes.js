@@ -5,6 +5,7 @@ const router = express.Router();
 const studentController = require('../controllers/studentController');
 const multer = require('multer');
 const path = require('path');
+const verifyToken  = require('../middlewares/verifyToken');
 
 // Configure multer for photo uploads with filename preservation
 const storage = multer.diskStorage({
@@ -21,6 +22,6 @@ const upload = multer({ storage });
 
 // Route to save or update student profile with photo upload
 router.post('/profile', upload.single('photo'), studentController.saveStudentProfile);
-router.get('/profile', studentController.fetchStudentProfile);
+router.get('/profile', verifyToken.verifyToken, studentController.fetchStudentProfile);
 
 module.exports = router;
