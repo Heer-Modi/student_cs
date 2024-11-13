@@ -25,8 +25,23 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
 
   // Fetch profile data on component mount
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user")); // Parse the string into an object
-    if (user) setProfile(user);
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await axios.get("/api/students/profile", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setProfile(response.data.student  );
+        console.log("Profile data:", response.data);
+        if (response.data.photo) setPhotoUrl(response.data.photo);
+      } catch (error) {
+        console.error("Error fetching student profile:", error);
+      }
+    };
+    fetchProfile();
   }, []);
 
   const {

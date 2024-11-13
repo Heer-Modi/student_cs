@@ -2,20 +2,19 @@ const jwt = require('jsonwebtoken');
 
 // Middleware to verify JWT token
 exports.verifyToken = (req, res, next) => {
-    const token = req.headers['authorization'];
+    const token = req.header('Authorization')?.split(' ')[1];
 
-    // Ensure the token is in the correct format
-    if (!token || !token.startsWith('Bearer ')) {
-        return res.status(403).json({ message: 'No token or invalid token format' });
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
     }
 
     try {
-        // Split 'Bearer' from the token and verify
-        const decoded = jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
-        req.user = decoded; // Attach user info to request object
-        next(); // Proceed to the next middleware or route handler
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded; // Now req.user has the decoded token data (id, role)
+        next();
     } catch (error) {
-        return res.status(401).json({ message: 'Invalid token' });
+        console.error('JWT authentication error:', error);
+        return res.status(403).json({ message: 'Invalid token' });
     }
 };
 

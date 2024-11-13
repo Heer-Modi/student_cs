@@ -65,8 +65,7 @@ exports.loginWithEmail = async (req, res, role) => {
 
         res.status(200).json({
             message: `Welcome back, ${user.name}!`,
-            token,
-            user
+            token
         });
     } catch (error) {
         console.error('Error logging in:', error);
