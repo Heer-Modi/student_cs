@@ -8,26 +8,26 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const Admin = {
-    uploadOnCloudinary: async function (localFilePath) {
-        try {
-            if (!localFilePath) return null;
 
-            // Upload file to Cloudinary
-            const response = await cloudinary.uploader.upload(localFilePath, {
-                resource_type: "image",
-            });
+const uploadOnCloudinary = async (localFilePath) => {
+    try {
+        if (!localFilePath) return null;
 
-            console.log("File successfully uploaded to Cloudinary:", response.url);
-            return response;
-        } catch (error) {
-            console.error("Error uploading to Cloudinary:", error);
-            return null;
-        } finally {
-            // Optional: Delete the local file after upload if needed
-            fs.unlinkSync(localFilePath);
-        }
-    },
+        // Upload file to Cloudinary
+        const response = await cloudinary.uploader.upload(localFilePath, {
+            resource_type: "image",
+        });
+
+        console.log("File successfully uploaded to Cloudinary:", response.url);
+        return response;
+    } catch (error) {
+        console.error("Error uploading to Cloudinary:", error);
+        return null;
+    } finally {
+        // Optional: Delete the local file after upload if needed
+        fs.unlinkSync(localFilePath);
+    }
 };
 
-module.exports = Admin;
+
+module.exports = uploadOnCloudinary;

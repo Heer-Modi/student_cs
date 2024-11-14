@@ -333,7 +333,7 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
             </form>
           ) : (
             <div style={styles.summaryContainer}>
-              <Avatar src={photo ? photoUrl : undefined} style={styles.photo} />
+              <Avatar src={photo} style={styles.photo} />
               <Typography variant="h6" sx={{ mt: 2 }}>
                 {firstName} {lastName}
               </Typography>

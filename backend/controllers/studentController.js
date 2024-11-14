@@ -2,15 +2,23 @@
 
 const path = require('path');
 const Student = require('../models/User');
+const uploadOnCloudinary = require('../utils/cloudinary');
 
 exports.saveStudentProfile = async (req, res) => {
     try {
         const { _id, firstName, lastName, Class, parentsName, parentsPhone, address, phone } = req.body;
 
         // Handle photo file if provided
-        let photoPath;
-        if (req.file) {
-            photoPath = path.join('/uploads', req.file.filename); // Save the relative path to the photo
+        // let photoPath;
+        // if (req.file) {
+        //     photoPath = path.join('/uploads', req.file.filename); // Save the relative path to the photo
+        // }
+
+        const photoPath = req.file?.path;
+        const photoUploadResponse = await uploadOnCloudinary(photoPath);
+
+        if (!photoUploadResponse) {
+            throw new ApiError(500, "Failed to upload image");
         }
 
         // Check if student already exists and update, else create new student profile
@@ -24,7 +32,7 @@ exports.saveStudentProfile = async (req, res) => {
                 parentsPhone,
                 address,
                 phone,
-                photo: photoPath || undefined // Only update photo if a new one is provided
+                photo: photoUploadResponse.url// Only update photo if a new one is provided
             },
             { new: true, upsert: true } // Create if doesn't exist
         );
