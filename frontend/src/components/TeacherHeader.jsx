@@ -1,10 +1,11 @@
 // TeacherHeader.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Avatar, Menu, MenuItem } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 
 const TeacherHeader = ({ title, open, profilePhoto }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [profile , setProfile] = useState({});
   const navigate = useNavigate();
 
   const handleProfileClick = (event) => {
@@ -19,11 +20,29 @@ const TeacherHeader = ({ title, open, profilePhoto }) => {
     navigate('/teacher/profile');
     handleClose();
   };
+   useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("/api/teachers/profile", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setProfile(response.data.teacher);
+        if (response.data.photo) setPhotoUrl(response.data.photo);
+      } catch (error) {
+        console.error("Error fetching teacher profile:", error);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const handleLogout = () => {
     navigate('/');
     handleClose();
   };
+
 
   return (
     <AppBar 
@@ -51,7 +70,7 @@ const TeacherHeader = ({ title, open, profilePhoto }) => {
           {title}
         </Typography>
         <IconButton onClick={handleProfileClick} sx={{ borderRadius: '50%' }}>
-          <Avatar src={profilePhoto || "path/to/default/photo.jpg"} alt="Profile" sx={{ width: 45, height: 45, border: '2px solid #f6d673' }} />
+          <Avatar src={profile.photo} alt="Profile" sx={{ width: 45, height: 45, border: '2px solid #f6d673' }} />
         </IconButton>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
           <Link to="/teacher/profile" onClick={handleClose} style={{ textDecoration: 'none', color: 'inherit' }}>

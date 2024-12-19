@@ -16,7 +16,7 @@ const ResetPassword = () => {
             const response = await axios.post('/api/users/reset-password', {
                 email,
                 newPassword,
-                confirmPassword
+                confirmPassword,
             });
             setMessage(response.data.message);
 
@@ -27,26 +27,34 @@ const ResetPassword = () => {
         }
     };
 
-    // CSS styles similar to login page
+    // CSS styles
     const containerStyle = {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#FFDC7F', // Light yellow background
+        padding: '20px', // Add padding for spacing
+    };
+
+    const cardStyle = {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100vh',
-        backgroundColor: '#f8f9fa',
-        padding: '20px',
+        backgroundColor: '#FFFFFF',
+        borderRadius: '15px',
+        boxShadow: '0 12px 25px rgba(0, 0, 0, 0.2)', // Increased blur and opacity for a stronger shadow
+        padding: '30px',
+        width: '400px',
     };
+    
 
-    const formStyle = {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        backgroundColor: 'white',
-        padding: '20px',
-        borderRadius: '10px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        width: '300px',
+    const headerStyle = {
+        fontSize: '24px',
+        fontWeight: '600',
+        color: '#0F67B1', // Blue header text
+        marginBottom: '20px',
     };
 
     const inputStyle = {
@@ -54,14 +62,15 @@ const ResetPassword = () => {
         padding: '10px',
         margin: '10px 0',
         borderRadius: '5px',
-        border: '1px solid #ced4da',
+        border: '1px solid #16325B', // Accent border
         fontSize: '16px',
+        backgroundColor: '#F5F9FF', // Subtle blueish input background
     };
 
     const buttonStyle = {
         width: '100%',
-        padding: '10px',
-        backgroundColor: '#007bff',
+        padding: '12px',
+        backgroundColor: '#0F67B1', // Primary blue button
         color: 'white',
         border: 'none',
         borderRadius: '5px',
@@ -71,48 +80,66 @@ const ResetPassword = () => {
     };
 
     const buttonHoverStyle = {
-        backgroundColor: '#0056b3',
+        backgroundColor: '#16325B', // Darker blue on hover
+    };
+
+    const messageStyle = {
+        marginTop: '10px',
+        textAlign: 'center',
+        fontSize: '14px',
+    };
+
+    const successMessageStyle = {
+        ...messageStyle,
+        color: '#0F67B1', // Blue for success message
+    };
+
+    const errorMessageStyle = {
+        ...messageStyle,
+        color: '#FF6F61', // Red for error message
     };
 
     return (
         <div style={containerStyle}>
-            <h2>Reset Password</h2>
-            <form onSubmit={handleSubmit} style={formStyle}>
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    style={inputStyle}
-                />
-                <input
-                    type="password"
-                    placeholder="New Password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    required
-                    style={inputStyle}
-                />
-                <input
-                    type="password"
-                    placeholder="Confirm New Password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    style={inputStyle}
-                />
-                <button
-                    type="submit"
-                    style={buttonStyle}
-                    onMouseEnter={(e) => (e.target.style.backgroundColor = buttonHoverStyle.backgroundColor)}
-                    onMouseLeave={(e) => (e.target.style.backgroundColor = '#007bff')}
-                >
-                    Reset Password
-                </button>
-                {message && <p>{message}</p>}
-                {error && <p>{error}</p>}
-            </form>
+            <div style={cardStyle}>
+                <h2 style={headerStyle}>Reset Password</h2>
+                <form onSubmit={handleSubmit}>
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        style={inputStyle}
+                    />
+                    <input
+                        type="password"
+                        placeholder="New Password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        required
+                        style={inputStyle}
+                    />
+                    <input
+                        type="password"
+                        placeholder="Confirm Password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                        style={inputStyle}
+                    />
+                    <button
+                        type="submit"
+                        style={buttonStyle}
+                        onMouseEnter={(e) => (e.target.style.backgroundColor = buttonHoverStyle.backgroundColor)}
+                        onMouseLeave={(e) => (e.target.style.backgroundColor = '#0F67B1')}
+                    >
+                        Set Password
+                    </button>
+                    {message && <p style={successMessageStyle}>{message}</p>}
+                    {error && <p style={errorMessageStyle}>{error}</p>}
+                </form>
+            </div>
         </div>
     );
 };

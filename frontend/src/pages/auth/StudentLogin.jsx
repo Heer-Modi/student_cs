@@ -30,39 +30,64 @@ const StudentLogin = () => {
         }
     };
 
-    // CSS styles 
+    // Inline CSS styles
     const containerStyle = {
         display: 'flex',
-        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#e8f0fe',
+    };
+
+    const loginCardStyle = {
+        display: 'flex',
+        backgroundColor: 'white',
+        borderRadius: '10px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        overflow: 'hidden',
+        width: '60%',
+        maxWidth: '900px',
+    };
+
+    const leftSectionStyle = {
+        flex: 1,
+        display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100vh',
         backgroundColor: '#f8f9fa',
         padding: '20px',
+    };
+
+    const rightSectionStyle = {
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '40px',
+    };
+
+    const headerStyle = {
+        textAlign: 'center',
+        marginBottom: '20px',
+        fontSize: '24px',
+        fontWeight: '600',
+        color: '#4a4a4a',
     };
 
     const formStyle = {
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        backgroundColor: 'white',
-        padding: '20px',
-        borderRadius: '10px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        width: '300px',
     };
 
     const inputStyle = {
-        width: '100%',
+        marginBottom: '20px',
         padding: '10px',
-        margin: '10px 0',
         borderRadius: '5px',
         border: '1px solid #ced4da',
         fontSize: '16px',
     };
 
     const buttonStyle = {
-        width: '100%',
         padding: '10px',
         backgroundColor: '#007bff',
         color: 'white',
@@ -71,50 +96,76 @@ const StudentLogin = () => {
         fontSize: '16px',
         cursor: 'pointer',
         transition: 'background-color 0.3s ease',
+        marginBottom: '20px',
     };
 
     const buttonHoverStyle = {
         backgroundColor: '#0056b3',
     };
 
-    const textStyle = {
-        marginTop: '15px',
+    const linkStyle = {
+        textAlign: 'center',
         color: '#007bff',
+        fontSize: '14px',
         cursor: 'pointer',
     };
 
     return (
         <div style={containerStyle}>
-            <h2>Student Login</h2>
-            <form onSubmit={handleSubmit} style={formStyle}>
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    style={inputStyle}
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    style={inputStyle}
-                />
-                <button
-                    type="submit"
-                    style={buttonStyle}
-                    onMouseEnter={(e) => (e.target.style.backgroundColor = buttonHoverStyle.backgroundColor)}
-                    onMouseLeave={(e) => (e.target.style.backgroundColor = '#007bff')}
-                >
-                    Login
-                </button>
-                {message && <p>{message}</p>} {/* Display welcome message */}
-                {error && <p>{error}</p>}
-            </form>
-            <p style={textStyle} onClick={() => navigate('/reset-password')}>Forgot Password?</p>
+            <div style={loginCardStyle}>
+                {/* Left section with illustration */}
+                <div style={leftSectionStyle}>
+                    <img
+                        src="https://static.vecteezy.com/system/resources/previews/001/991/652/original/sign-in-page-flat-design-concept-illustration-icon-account-login-user-login-abstract-metaphor-can-use-for-landing-page-mobile-app-ui-posters-banners-free-vector.jpg" 
+                        alt="Login Illustration"
+                        style={{ width: '80%', height: 'auto' }}
+                    />
+                </div>
+
+                {/* Right section with form */}
+                <div style={rightSectionStyle}>
+                <h2 style={headerStyle}>Student Login</h2>
+                    <form onSubmit={handleSubmit} style={formStyle}>
+                        <input
+                            type="email"
+                            placeholder="Enter your username/email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            style={inputStyle}
+                        />
+                        <input
+                            type="password"
+                            placeholder="Enter your password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            style={inputStyle}
+                        />
+                        <button
+                            type="submit"
+                            style={buttonStyle}
+                            onMouseEnter={(e) => (e.target.style.backgroundColor = buttonHoverStyle.backgroundColor)}
+                            onMouseLeave={(e) => (e.target.style.backgroundColor = '#007bff')}
+                        >
+                            Login
+                        </button>
+                        {message && <p style={{ color: 'green' }}>{message}</p>}
+                        {error && <p style={{ color: 'red' }}>{error}</p>}
+                    </form>
+                    <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                        <p
+                            style={linkStyle}
+                            onClick={() => navigate('/reset-password')}
+                        >
+                            Forgot Password?
+                        </p>
+                        <p style={linkStyle} onClick={() => navigate('/')}>
+                            Don't have an account? <b>Signup now</b>
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
