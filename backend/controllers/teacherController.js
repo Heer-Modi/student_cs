@@ -9,9 +9,15 @@ exports.saveTeacherProfile = async (req, res) => {
         const { _id, name, designation, phone, email, address, department } = req.body;
 
         // Handle photo file if provided
-        let photoPath;
-        if (req.file) {
-            photoPath = path.join('/uploads', req.file.filename);
+        //let photoPath;
+        //if (req.file) {
+           // photoPath = path.join('/uploads', req.file.filename);
+        //}
+        const photoPath = req.file?.path;
+        const photoUploadResponse = await uploadOnCloudinary(photoPath);
+
+        if (!photoUploadResponse) {
+            throw new ApiError(500, "Failed to upload image");
         }
 
         // Update or create new teacher profile
@@ -24,7 +30,7 @@ exports.saveTeacherProfile = async (req, res) => {
                 email,
                 address,
                 department,
-                photo: photoPath || undefined, // Update photo if a new one is provided
+                photo: photoUploadResponse.url // Update photo if a new one is provided
             },
             { new: true, upsert: true }
         );

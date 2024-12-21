@@ -14,7 +14,7 @@ import {
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import TeacherSideBar from "../../components/TeacherSidebar";
-
+import PersonIcon from "@mui/icons-material/Person";
 const drawerWidth = 240;
 
 const TeacherProfile = ({ refreshProfilePhoto }) => {
@@ -34,6 +34,7 @@ const TeacherProfile = ({ refreshProfilePhoto }) => {
           },
         });
         setProfile(response.data.teacher);
+        console.log("Profile data:", response.data);
         if (response.data.photo) setPhotoUrl(response.data.photo);
       } catch (error) {
         console.error("Error fetching teacher profile:", error);
@@ -42,29 +43,39 @@ const TeacherProfile = ({ refreshProfilePhoto }) => {
     fetchProfile();
   }, []);
 
-  const { name = "", designation = "", phone = "", email = "", address = "", department = "" } = profile;
+  const { name = "", designation = "", phone = "", email = "", address = "", department = "", photo="", } = profile;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "phone" && (!/^\d*$/.test(value) || value.length > 10)) return;
+    if (name === "phone" && (!/^\d*$/.test(value) || value.length > 10)) {
+      return;
+    }
     setProfile({ ...profile, [name]: value });
   };
 
-  const handleCancelEditing = () => setIsEditable(false);
+  const handleCancelEditing = () => { 
+    setIsEditable(false); 
+  };
 
-  const handleFileChange = (e) => setProfile({ ...profile, photo: e.target.files[0] });
+  const handleFileChange = (e) => {
+     setProfile({ ...profile, photo: e.target.files[0] });
+  };
 
-  const handleSave = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { _id } = profile;
     const formData = new FormData();
     for (const key in profile) {
       formData.append(key, profile[key]);
     }
+    formData.append("_id", _id);
+    
     try {
       const response = await axios.post("/api/teachers/profile", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      if (response.data?.photo) {
-        const newPhotoUrl = response.data.photo;
+      if (response.data?.teacher?.photo) {
+        const newPhotoUrl = `${response.data.photo}`;
         localStorage.setItem("profilePhoto", newPhotoUrl);
         setPhotoUrl(newPhotoUrl);
         refreshProfilePhoto(newPhotoUrl);
@@ -145,6 +156,10 @@ const TeacherProfile = ({ refreshProfilePhoto }) => {
       cursor: "pointer",
       border: "3px solid #f6d673",
     },
+    profileIcon: {
+      fontSize: "120px",
+      color: "#007bff",
+    },
     mainContent: {
       flexGrow: 1,
       padding: "24px",
@@ -196,7 +211,7 @@ const TeacherProfile = ({ refreshProfilePhoto }) => {
           </Typography>
 
           {isEditable ? (
-            <form>
+            <form onSubmit={handleSubmit}>
               <div style={styles.photoContainer}>
                 <input
                   type="file"
@@ -207,12 +222,10 @@ const TeacherProfile = ({ refreshProfilePhoto }) => {
                   id="photo-upload"
                 />
                 <label htmlFor="photo-upload">
-                  {photoUrl ? (
+                  {photo ? (
                     <img src={photoUrl} alt="Profile" style={styles.photo} />
                   ) : (
-                    <Avatar style={{ ...styles.photo, backgroundColor: "#457b9d" }}>
-                      {name.charAt(0)}
-                    </Avatar>
+                    <PersonIcon style={styles.profileIcon} />
                   )}
                 </label>
               </div>
@@ -277,7 +290,7 @@ const TeacherProfile = ({ refreshProfilePhoto }) => {
               />
 
               <div style={styles.buttonContainer}>
-                <Button onClick={handleSave} variant="contained" sx={styles.button}>
+                <Button type="submit" variant="contained" sx={styles.button}>
                   Save Profile
                 </Button>
                 <Button
@@ -291,7 +304,7 @@ const TeacherProfile = ({ refreshProfilePhoto }) => {
             </form>
           ) : (
             <div style={styles.summaryContainer}>
-              <Avatar src={photoUrl} style={styles.photo} />
+              <Avatar src={photo} style={styles.photo} />
               <Typography variant="h6" sx={{ mt: 2, gridColumn: "span 2" }}>{name}</Typography>
               <div style={styles.leftColumn}>
                 <Typography>Designation: {designation}</Typography>
