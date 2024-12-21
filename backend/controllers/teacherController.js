@@ -2,6 +2,7 @@
 
 const path = require('path');
 const Teacher = require('../models/User'); // Reuse the User model as it includes the teacher fields
+const uploadOnCloudinary = require('../utils/cloudinary');
 
 // Save or Update Teacher Profile
 exports.saveTeacherProfile = async (req, res) => {

@@ -17,11 +17,19 @@ import TeacherSideBar from "../../components/TeacherSidebar";
 import PersonIcon from "@mui/icons-material/Person";
 const drawerWidth = 240;
 
-const TeacherProfile = ({ refreshProfilePhoto }) => {
+const TeacherProfile = () => {
   const [profile, setProfile] = useState({});
   const [isEditable, setIsEditable] = useState(false);
   const [open, setOpen] = useState(true);
   const [photoUrl, setPhotoUrl] = useState(null);
+  const [profilePhoto, setProfilePhoto] = useState(localStorage.getItem('profilePhoto')); // Profile photo state
+
+  const refreshProfilePhoto = (newPhotoUrl) => {
+    if (newPhotoUrl) {
+      localStorage.setItem('profilePhoto', newPhotoUrl);
+      setProfilePhoto(newPhotoUrl);
+    }
+  };
 
   // Fetch profile data on component mount
   useEffect(() => {
