@@ -10,6 +10,7 @@ import UserManagement from './UserManagement'; // Placeholder for User Managemen
 import ComplaintsManagement from './ComplaintsManagement'; // Placeholder for Complaints
 import NotificationsManagement from './NotificationsManagement'; // Placeholder for Notifications
 import Analytics from './Analytics'; // Placeholder for Analytics
+import AdminProfile from './AdminProfile';
 import AdminSideBar from '../../components/AdminSideBar'; // Custom Admin Sidebar
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -50,6 +51,7 @@ const AdminDashboard = () => {
                 <Route path="/complaints-management" element={<ComplaintsManagement />} />
                 <Route path="/notifications-management" element={<NotificationsManagement />} />
                 <Route path="/analytics" element={<Analytics />} />
+                <Route path="/profile" element={<AdminProfile />} />
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </Box> 

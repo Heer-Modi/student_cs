@@ -29,7 +29,7 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use('/api/users', authRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/teachers', teacherRoutes);
-app.use('/api/admins', adminRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/dashboard', dashboardRoutes); // Adding the dashboard routes
 app.use('/api/complaints', complaintRoutes); // Route prefix for complaints
 

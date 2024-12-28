@@ -4,7 +4,7 @@ const adminController = require('../controllers/adminController');
 const { verifyToken, restrictToRole } = require('../middlewares/verifyToken');
 
 // Admin Login
-router.post('/login', adminController.loginAdmin);
+//router.post('/login', adminController.loginAdmin);
 
 // Fetch Admin Dashboard Data
 router.get('/dashboard', verifyToken, restrictToRole('admin'), adminController.getAdminDashboard);
@@ -14,5 +14,11 @@ router.post('/add-user', verifyToken, restrictToRole('admin'), adminController.a
 
 // Fetch All Users
 router.get('/users', verifyToken, restrictToRole('admin'), adminController.getAllUsers);
+
+// Fetch Admin Profile
+router.get('/profile', verifyToken, restrictToRole('admin'), adminController.fetchAdminProfile);
+
+// Save Admin Profile
+router.post('/profile', verifyToken, restrictToRole('admin'), adminController.saveAdminProfile);
 
 module.exports = router;

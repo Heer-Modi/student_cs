@@ -23,6 +23,7 @@ import UserManagement from './pages/admin/UserManagement';
 import ComplaintsManagement from './pages/admin/ComplaintsManagement';
 import NotificationsManagement from './pages/admin/NotificationsManagement';
 import Analytics from './pages/admin/Analytics';
+import AdminProfile from './pages/admin/AdminProfile';
 
 // Common Components
 import ComplaintForm from './components/ComplaintForm';
@@ -68,7 +69,8 @@ function AppContent() {
     '/admin/user-management',
     '/admin/complaints-management',
     '/admin/notifications-management',
-    '/admin/analytics'
+    '/admin/analytics',
+    '/admin/profile'
   ];
 
   const noHeaderFooterRoutes = [
@@ -120,6 +122,7 @@ function AppContent() {
         <Route path="/admin/complaints-management" element={<ComplaintsManagement />} />
         <Route path="/admin/notifications-management" element={<NotificationsManagement />} />
         <Route path="/admin/analytics" element={<Analytics />} /> 
+        <Route path="/admin/profile" element={<AdminProfile />} />
 
         {/* Common Routes */}
         <Route path="/" element={<Register />} />
