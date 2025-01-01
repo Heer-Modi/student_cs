@@ -35,6 +35,7 @@ const AdminProfile = () => {
           },
         });
         setProfile(response.data.admin);
+        console.log(response.data.admin);
         if (response.data.admin.photo) setPhotoUrl(response.data.admin.photo);
       } catch (error) {
         console.error("Error fetching admin profile:", error);
@@ -58,16 +59,19 @@ const AdminProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { _id } = profile;
+    
     const formData = new FormData();
     for (const key in profile) {
       formData.append(key, profile[key]);
     }
+    formData.append("_id", _id);
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post("/api/admin/profile", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
         },
       });
       setPhotoUrl(response.data.admin.photo);

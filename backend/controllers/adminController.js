@@ -114,7 +114,7 @@ exports.fetchAdminProfile = async (req, res) => {
 // Save Admin Profile
 exports.saveAdminProfile = async (req, res) => {
     try {
-        const { name, phone, email, address } = req.body;
+        const { _id, name, phone, email, address } = req.body;
         const photoPath = req.file?.path;
 
         // Upload photo to Cloudinary if provided
@@ -125,20 +125,20 @@ exports.saveAdminProfile = async (req, res) => {
 
         // Update admin profile
         const admin = await User.findOneAndUpdate(
-            { _id: req.user.id, role: 'admin' },
+            { _id: _id, role: "admin" },
             {
                 name,
                 phone,
                 email,
                 address,
-                photo: photoUploadResponse?.url,
+                photo: photoUploadResponse?.url || undefined,
             },
             { new: true } // Return the updated document
         );
 
-        if (!admin) {
-            return res.status(404).json({ message: 'Admin profile not found' });
-        }
+        // if (!admin) {
+        //     return res.status(404).json({ message: 'Admin profile not found' });
+        // }
 
         res.status(200).json({ message: 'Admin profile saved successfully', admin });
     } catch (error) {

@@ -31,7 +31,7 @@ exports.saveTeacherProfile = async (req, res) => {
                 email,
                 address,
                 department,
-                photo: photoUploadResponse.url // Update photo if a new one is provided
+                photo: photoUploadResponse?.url // Update photo if a new one is provided
             },
             { new: true, upsert: true }
         );

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
 const { verifyToken, restrictToRole } = require('../middlewares/verifyToken');
+const { upload } = require('../middlewares/multermiddleware');
 
 // Admin Login
 //router.post('/login', adminController.loginAdmin);
@@ -19,6 +20,6 @@ router.get('/users', verifyToken, restrictToRole('admin'), adminController.getAl
 router.get('/profile', verifyToken, restrictToRole('admin'), adminController.fetchAdminProfile);
 
 // Save Admin Profile
-router.post('/profile', verifyToken, restrictToRole('admin'), adminController.saveAdminProfile);
+router.post('/profile', upload.single('photo'), adminController.saveAdminProfile);
 
 module.exports = router;
