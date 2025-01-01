@@ -1,222 +1,238 @@
-import React, { useState } from 'react';
-import AdminSideBar from './../../components/AdminSideBar'; // Assuming you have the AdminSideBar component
+import React, { useState } from "react";
+import {
+  Box,
+  CssBaseline,
+  Toolbar,
+  Drawer,
+  Typography,
+  Button,
+  TextField,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  IconButton,
+} from "@mui/material";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import AdminSideBar from "./../../components/AdminSideBar";
 
-// Styles
-const styles = {
-  pageLayout: {
-    display: 'flex', // Sidebar + Content
-  },
-  mainContent: {
-    flexGrow: 1,
-    padding: '20px',
-    backgroundColor: '#f4f4f4', // Light gray for the background
-    height: '100vh',
-    overflowY: 'auto',
-  },
-  section: {
-    backgroundColor: '#ffffff',
-    marginBottom: '20px',
-    padding: '20px',
-    borderRadius: '8px',
-    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)', // Subtle shadow
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px',
-  },
-  input: {
-    padding: '10px',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-    fontSize: '16px',
-  },
-  button: {
-    padding: '10px',
-    backgroundColor: '#3f51b5',
-    color: '#ffffff',
-    border: 'none',
-    borderRadius: '4px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-  },
-  table: {
-    width: '100%',
-    borderCollapse: 'collapse',
-  },
-  th: {
-    textAlign: 'left',
-    padding: '10px',
-    backgroundColor: '#3f51b5',
-    color: '#ffffff',
-  },
-  td: {
-    padding: '10px',
-    borderBottom: '1px solid #ddd',
-  },
-};
+const drawerWidth = 240;
 
 const UserManagement = () => {
   const [teachers, setTeachers] = useState([]);
   const [classes, setClasses] = useState([]);
   const [students, setStudents] = useState([]);
-  const [classToAdd, setClassToAdd] = useState('');
-  const [teacherToAdd, setTeacherToAdd] = useState('');
-  const [studentToAdd, setStudentToAdd] = useState('');
-  const [selectedClass, setSelectedClass] = useState('');
-  const [teacherAllocation, setTeacherAllocation] = useState({});
+  const [classToAdd, setClassToAdd] = useState("");
+  const [teacherToAdd, setTeacherToAdd] = useState("");
+  const [studentToAdd, setStudentToAdd] = useState("");
+  const [selectedClass, setSelectedClass] = useState("");
+  const [open, setOpen] = useState(true);
 
-  // Add Teacher
+  const toggleDrawer = () => setOpen(!open);
+
+  const styles = {
+    drawerStyled: {
+      width: drawerWidth,
+      flexShrink: 0,
+      "& .MuiDrawer-paper": {
+        width: open ? drawerWidth : "70px",
+        transition: "width 0.3s ease",
+        overflowX: "hidden",
+      },
+    },
+    pageWrapper: {
+      display: "flex",
+      minHeight: "100vh",
+    },
+    contentWrapper: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      minHeight: "100vh",
+      padding: "20px",
+      transition: "margin-left 0.3s ease",
+      marginLeft: open ? `${drawerWidth}px` : "70px",
+    },
+    rowContainer: {
+      display: "flex",
+      justifyContent: "center",
+      gap: "30px",
+      marginBottom: "30px",
+      width: "100%",
+    },
+    container: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "flex-start",
+      padding: "40px",
+      width: "100%",
+      maxWidth: "350px", // Smaller width for Add Teacher and Add Student
+      backgroundColor: "#f6d673",
+      borderRadius: "10px",
+      boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+      color: "#10184b",
+    },
+    addClassContainer: {
+      maxWidth: "500px", // Larger container for Add Class
+    },
+    sectionTitle: {
+      marginBottom: "20px",
+      color: "#10184b",
+    },
+    formField: {
+      marginBottom: "20px",
+      width: "100%",
+    },
+    button: {
+      backgroundColor: "#3f51b5",
+      color: "#fff",
+      "&:hover": {
+        backgroundColor: "#303f9f",
+      },
+    },
+  };
+
   const handleAddTeacher = () => {
     if (teacherToAdd.trim()) {
       setTeachers([...teachers, teacherToAdd]);
-      setTeacherToAdd('');
+      setTeacherToAdd("");
     }
   };
 
-  // Add Class
   const handleAddClass = () => {
     if (classToAdd.trim()) {
       setClasses([...classes, classToAdd]);
-      setClassToAdd('');
+      setClassToAdd("");
     }
   };
 
-  // Add Student to a Class
   const handleAddStudent = () => {
     if (studentToAdd.trim() && selectedClass) {
-      const newStudent = { name: studentToAdd, className: selectedClass };
-      setStudents([...students, newStudent]);
-      setStudentToAdd('');
+      setStudents([...students, { name: studentToAdd, className: selectedClass }]);
+      setStudentToAdd("");
     }
-  };
-
-  // Allocate Teacher to a Class
-  const handleAllocateTeacher = (className, teacher) => {
-    setTeacherAllocation({ ...teacherAllocation, [className]: teacher });
   };
 
   return (
-    <div style={styles.pageLayout}>
-      <AdminSideBar />
-      <div style={styles.mainContent}>
-        <h1>User Management</h1>
+    <Box sx={styles.pageWrapper}>
+      <CssBaseline />
+      <Drawer variant="permanent" sx={styles.drawerStyled}>
+        <Toolbar>
+          <IconButton onClick={toggleDrawer}>
+            {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          </IconButton>
+        </Toolbar>
+        <AdminSideBar open={open} />
+      </Drawer>
 
-        {/* Add Teacher Section */}
-        <div style={styles.section}>
-          <h2>Add Teacher</h2>
-          <form style={styles.form} onSubmit={(e) => e.preventDefault()}>
-            <input
-              style={styles.input}
-              type="text"
-              placeholder="Enter teacher's name"
+      <Box sx={styles.contentWrapper}>
+        {/* Row: Add Teacher and Add Student */}
+        <Box sx={styles.rowContainer}>
+          <Box sx={styles.container}>
+            <Typography variant="h5" sx={styles.sectionTitle}>
+              Add Teacher
+            </Typography>
+            <TextField
+              label="Teacher's Name"
               value={teacherToAdd}
               onChange={(e) => setTeacherToAdd(e.target.value)}
+              variant="outlined"
+              sx={styles.formField}
             />
-            <button style={styles.button} onClick={handleAddTeacher}>
+            <Button variant="contained" sx={styles.button} onClick={handleAddTeacher}>
               Add Teacher
-            </button>
-          </form>
-          <h3>Teachers List</h3>
-          <ul>
-            {teachers.map((teacher, index) => (
-              <li key={index}>{teacher}</li>
-            ))}
-          </ul>
-        </div>
+            </Button>
+            <Typography variant="h6" sx={{ marginTop: "20px" }}>
+              Teachers List
+            </Typography>
+            <ul>
+              {teachers.map((teacher, index) => (
+                <li key={index}>{teacher}</li>
+              ))}
+            </ul>
+          </Box>
 
-        {/* Add Class Section */}
-        <div style={styles.section}>
-          <h2>Add Class</h2>
-          <form style={styles.form} onSubmit={(e) => e.preventDefault()}>
-            <input
-              style={styles.input}
-              type="text"
-              placeholder="Enter class name"
-              value={classToAdd}
-              onChange={(e) => setClassToAdd(e.target.value)}
+          <Box sx={styles.container}>
+            <Typography variant="h5" sx={styles.sectionTitle}>
+              Add Student
+            </Typography>
+            <TextField
+              label="Student's Name"
+              value={studentToAdd}
+              onChange={(e) => setStudentToAdd(e.target.value)}
+              variant="outlined"
+              sx={styles.formField}
             />
-            <button style={styles.button} onClick={handleAddClass}>
-              Add Class
-            </button>
-          </form>
-          <h3>Classes List</h3>
-          <ul>
-            {classes.map((className, index) => (
-              <li key={index}>{className}</li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Add Student Section */}
-        <div style={styles.section}>
-          <h2>Add Student</h2>
-          <form style={styles.form} onSubmit={(e) => e.preventDefault()}>
-            <select
-              style={styles.input}
+            <TextField
+              select
+              SelectProps={{ native: true }}
+              label="Select Class"
               value={selectedClass}
               onChange={(e) => setSelectedClass(e.target.value)}
+              variant="outlined"
+              sx={styles.formField}
             >
-              <option value="">Select Class</option>
+              <option value="">None</option>
               {classes.map((className, index) => (
                 <option key={index} value={className}>
                   {className}
                 </option>
               ))}
-            </select>
-            <input
-              style={styles.input}
-              type="text"
-              placeholder="Enter student's name"
-              value={studentToAdd}
-              onChange={(e) => setStudentToAdd(e.target.value)}
-            />
-            <button style={styles.button} onClick={handleAddStudent}>
+            </TextField>
+            <Button variant="contained" sx={styles.button} onClick={handleAddStudent}>
               Add Student
-            </button>
-          </form>
-          <h3>Students List</h3>
-          <table style={styles.table}>
-            <thead>
-              <tr>
-                <th style={styles.th}>Name</th>
-                <th style={styles.th}>Class</th>
-              </tr>
-            </thead>
-            <tbody>
-              {students.map((student, index) => (
-                <tr key={index}>
-                  <td style={styles.td}>{student.name}</td>
-                  <td style={styles.td}>{student.className}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Allocate Teacher Section */}
-        <div style={styles.section}>
-          <h2>Allocate Teacher</h2>
-          {classes.map((className, index) => (
-            <div key={index} style={{ marginBottom: '10px' }}>
-              <strong>{className}</strong>
-              <select
-                style={styles.input}
-                value={teacherAllocation[className] || ''}
-                onChange={(e) => handleAllocateTeacher(className, e.target.value)}
-              >
-                <option value="">Select Teacher</option>
-                {teachers.map((teacher, index) => (
-                  <option key={index} value={teacher}>
-                    {teacher}
-                  </option>
+            </Button>
+            <Typography variant="h6" sx={{ marginTop: "20px" }}>
+              Students List
+            </Typography>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Class</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {students.map((student, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{student.name}</TableCell>
+                    <TableCell>{student.className}</TableCell>
+                  </TableRow>
                 ))}
-              </select>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+              </TableBody>
+            </Table>
+          </Box>
+        </Box>
+
+        {/* Add Class Section */}
+        <Box sx={{ ...styles.container, ...styles.addClassContainer }}>
+          <Typography variant="h5" sx={styles.sectionTitle}>
+            Add Class
+          </Typography>
+          <TextField
+            label="Class Name"
+            value={classToAdd}
+            onChange={(e) => setClassToAdd(e.target.value)}
+            variant="outlined"
+            sx={styles.formField}
+          />
+          <Button variant="contained" sx={styles.button} onClick={handleAddClass}>
+            Add Class
+          </Button>
+          <Typography variant="h6" sx={{ marginTop: "20px" }}>
+            Classes List
+          </Typography>
+          <ul>
+            {classes.map((className, index) => (
+              <li key={index}>{className}</li>
+            ))}
+          </ul>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

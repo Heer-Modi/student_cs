@@ -285,7 +285,7 @@ const TeacherProfile = () => {
                 value={email}
                 onChange={handleChange}
                 fullWidth
-                sx={{ mb: 2 }}
+                sx={{ mb: 2 }} 
                 required
               />
               <TextField

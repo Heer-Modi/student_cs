@@ -1,5 +1,5 @@
 import React from 'react';
-import { ListItem, ListItemIcon, ListItemText, List } from '@mui/material';
+import { ListItemButton, ListItemIcon, ListItemText, List } from '@mui/material'; // Use ListItemButton instead of ListItem
 import { Link } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home'; // Import Home Icon
 import GroupIcon from '@mui/icons-material/Group';
@@ -46,7 +46,7 @@ const AdminSideBar = ({ open }) => {
     { text: 'Home', icon: <HomeIcon sx={styles.icon} />, path: '/admin/dashboard' }, // Added Home
     { text: 'User Management', icon: <GroupIcon sx={styles.icon} />, path: '/admin/user-management' },
     { text: 'Complaints Management', icon: <BugReportIcon sx={styles.icon} />, path: '/admin/complaints-management' },
-    { text: 'Notifications', icon: <NotificationsIcon sx={styles.icon} />, path: '/admin/notifications-management' },
+    { text: 'Notice', icon: <NotificationsIcon sx={styles.icon} />, path: '/admin/notifications-management' },
     { text: 'Analytics', icon: <AnalyticsIcon sx={styles.icon} />, path: '/admin/analytics' },
     { text: 'Profile', icon: <PersonIcon sx={styles.icon} />, path: '/admin/profile' },
   ];
@@ -54,10 +54,10 @@ const AdminSideBar = ({ open }) => {
   return (
     <List sx={open ? styles.drawerOpen : styles.drawerClosed}>
       {menuItems.map((item, index) => (
-        <ListItem button key={index} component={Link} to={item.path} sx={styles.listItem}>
+        <ListItemButton key={index} component={Link} to={item.path} sx={styles.listItem}>
           <ListItemIcon>{item.icon}</ListItemIcon>
           {open && <ListItemText primary={item.text} sx={styles.text} />}
-        </ListItem>
+        </ListItemButton>
       ))}
     </List>
   );
