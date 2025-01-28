@@ -11,6 +11,8 @@ const complaintRoutes = require('./routes/complaintRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes'); // Importing the new dashboard routes
+const noticeRoutes = require("./routes/noticeRoutes");
+
 
 // Initialize app
 const app = express();
@@ -32,6 +34,8 @@ app.use('/api/teachers', teacherRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/dashboard', dashboardRoutes); // Adding the dashboard routes
 app.use('/api/complaints', complaintRoutes); // Route prefix for complaints
+app.use("/api/notices", noticeRoutes);
+
 
 // Start server
 const PORT = process.env.PORT || 5000;

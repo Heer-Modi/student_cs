@@ -1,87 +1,113 @@
-import React, { useState } from 'react';
-import { Box, CssBaseline, Toolbar, Drawer, List, Divider, IconButton, Typography } from '@mui/material';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import CloseIcon from '@mui/icons-material/Close';
-import StudentSideBar from './StudentSideBar'; // Import Sidebar
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  CssBaseline,
+  Toolbar,
+  Drawer,
+  IconButton,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import CloseIcon from "@mui/icons-material/Close";
+import StudentSideBar from "./StudentSideBar"; // Import Sidebar
+import axios from "axios"; // For API requests
 
-const drawerWidth = 240; // Default sidebar width
+const drawerWidth = 240; // Sidebar width
 
-const Notification = () => {
-  const [open, setOpen] = useState(true); // Sidebar state for toggling
-  const [notifications, setNotifications] = useState([
-    { id: 1, message: 'Meeting with counselor scheduled for 2024-09-20' },
-    { id: 2, message: 'New document uploaded: Career Roadmap' },
-    { id: 3, message: 'Reminder: Submit your course feedback by end of week' },
-    { id: 4, message: 'Your counseling session is tomorrow at 3:00 PM' },
-    { id: 5, message: 'New career document uploaded: Resume Building Guide' }
-  ]); // Sample notifications
+const Notifications = () => {
+  const [open, setOpen] = useState(true); // Sidebar open/close state
+  const [notifications, setNotifications] = useState([]); // State to store notices
+  const [loading, setLoading] = useState(true); // Loading state for fetching notices
+  const [error, setError] = useState(null); // State to handle errors
 
-  const toggleDrawer = () => setOpen(!open); // Function to toggle the sidebar open/close
+  // Fetch notices from the backend
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const token = localStorage.getItem("token"); // Retrieve JWT token
+        const response = await axios.get("/api/notices", {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include token in headers for authentication
+          },
+        });
 
+        setNotifications(response.data.notices); // Set fetched notices
+        setLoading(false); // Stop the loading spinner
+      } catch (err) {
+        console.error("Error fetching notifications:", err);
+        setError("Failed to fetch notifications");
+        setLoading(false); // Stop the spinner even on error
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
+  // Remove a notification from the list
   const handleDelete = (id) => {
-    setNotifications(notifications.filter((notification) => notification.id !== id)); // Remove notification on delete
+    setNotifications(notifications.filter((notification) => notification._id !== id));
   };
+
+  // Toggle the sidebar open/close state
+  const toggleDrawer = () => setOpen(!open);
 
   const styles = {
     mainContent: {
-      backgroundColor: '#f6f7f9', // Light gray background for the main content
+      backgroundColor: "#f6f7f9", // Light gray background for the main content
       flexGrow: 1,
-      height: '100vh',
-      padding: '24px',
-      transition: 'margin-left 0.3s ease',
-      marginLeft: open ? `${drawerWidth}px` : '70px', // Sidebar margin adjustment
+      height: "100vh",
+      padding: "24px",
+      transition: "margin-left 0.3s ease",
+      marginLeft: open ? `${drawerWidth}px` : "70px", // Adjust margin for sidebar
     },
     drawerStyled: {
       width: drawerWidth,
       flexShrink: 0,
-      '& .MuiDrawer-paper': {
-        width: open ? drawerWidth : '70px',
-        transition: 'width 0.3s ease',
-        
-        overflowX: 'hidden',  // Prevent overflow and scrollbar in sidebar
+      "& .MuiDrawer-paper": {
+        width: open ? drawerWidth : "70px",
+        transition: "width 0.3s ease",
+        overflowX: "hidden", // Prevent overflow in sidebar
       },
     },
     closeButton: {
-      color: '#f44336', // Red color for close button
+      color: "#f44336", // Red color for the close button
     },
     container: {
-      margin: '0 auto',
-      maxWidth: '90%',
-      padding: '20px',
-      textAlign: 'center',
+      margin: "0 auto",
+      maxWidth: "90%",
+      padding: "20px",
+      textAlign: "center",
     },
     heading: {
-      marginBottom: '20px',
-      fontWeight: 'bold',
-      color: '#10184b', // Dark blue heading for consistency with sidebar
+      marginBottom: "20px",
+      fontWeight: "bold",
+      color: "#10184b", // Dark blue heading for consistency
     },
     list: {
-      listStyleType: 'none',
+      listStyleType: "none",
       padding: 0,
-      width: '100%',
+      width: "100%",
     },
     listItem: {
-      backgroundColor: '#f6d673', // Light yellow background for notifications
-      margin: '10px 0',
-      padding: '15px',
-      borderRadius: '8px',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      color: '#10184b', // Dark blue text for notifications
+      backgroundColor: "#f6d673", // Light yellow background for notices
+      margin: "10px 0",
+      padding: "15px",
+      borderRadius: "8px",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      color: "#10184b", // Dark blue text for notices
     },
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <CssBaseline />
 
-       {/* Sidebar */}
-       <Drawer
-        variant="permanent"
-        sx={styles.drawerStyled}
-      >
+      {/* Sidebar */}
+      <Drawer variant="permanent" sx={styles.drawerStyled}>
         <Toolbar>
           <IconButton onClick={toggleDrawer}>
             {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
@@ -90,30 +116,42 @@ const Notification = () => {
         <StudentSideBar open={open} />
       </Drawer>
 
-      {/* Main content for Notifications */}
+      {/* Main Content */}
       <Box component="main" sx={styles.mainContent}>
         <Toolbar />
         <div style={styles.container}>
-          <Typography variant="h4" style={styles.heading}>Notifications</Typography>
-          <ul style={styles.list}>
-            {notifications.map((notification) => (
-              <li key={notification.id} style={styles.listItem}>
-                {notification.message}
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
-                  onClick={() => handleDelete(notification.id)}
-                  sx={styles.closeButton} // Red close button
-                >
-                  <CloseIcon />
-                </IconButton>
-              </li>
-            ))}
-          </ul>
+          <Typography variant="h4" style={styles.heading}>
+            Notifications
+          </Typography>
+
+          {/* Show loading spinner while fetching */}
+          {loading ? (
+            <CircularProgress />
+          ) : error ? (
+            <Typography color="error">{error}</Typography>
+          ) : notifications.length === 0 ? (
+            <Typography>No notifications available</Typography>
+          ) : (
+            <ul style={styles.list}>
+              {notifications.map((notification) => (
+                <li key={notification._id} style={styles.listItem}>
+                  {notification.content}
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => handleDelete(notification._id)}
+                    sx={styles.closeButton}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </Box>
     </Box>
   );
 };
 
-export default Notification;
+export default Notifications;

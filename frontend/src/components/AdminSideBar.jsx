@@ -46,7 +46,7 @@ const AdminSideBar = ({ open }) => {
     { text: 'Home', icon: <HomeIcon sx={styles.icon} />, path: '/admin/dashboard' }, // Added Home
     { text: 'User Management', icon: <GroupIcon sx={styles.icon} />, path: '/admin/user-management' },
     { text: 'Complaints Management', icon: <BugReportIcon sx={styles.icon} />, path: '/admin/complaints-management' },
-    { text: 'Notice', icon: <NotificationsIcon sx={styles.icon} />, path: '/admin/notifications-management' },
+    { text: 'Notice', icon: <NotificationsIcon sx={styles.icon} />, path: '/admin/notice-managment' },
     { text: 'Analytics', icon: <AnalyticsIcon sx={styles.icon} />, path: '/admin/analytics' },
     { text: 'Profile', icon: <PersonIcon sx={styles.icon} />, path: '/admin/profile' },
   ];

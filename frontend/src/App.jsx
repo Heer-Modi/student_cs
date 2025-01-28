@@ -21,7 +21,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 // Admin Specific Pages
 import UserManagement from './pages/admin/UserManagement';
 import ComplaintsManagement from './pages/admin/ComplaintsManagement';
-import NotificationsManagement from './pages/admin/NotificationsManagement';
+import AdminNoticeManagement from './pages/admin/AdminNoticeManagement';
 import Analytics from './pages/admin/Analytics';
 import AdminProfile from './pages/admin/AdminProfile';
 
@@ -68,7 +68,7 @@ function AppContent() {
     '/admin/dashboard',
     '/admin/user-management',
     '/admin/complaints-management',
-    '/admin/notifications-management',
+    '/admin/notice-managment',
     '/admin/analytics',
     '/admin/profile'
   ];
@@ -120,7 +120,7 @@ function AppContent() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/user-management" element={<UserManagement />} />
         <Route path="/admin/complaints-management" element={<ComplaintsManagement />} />
-        <Route path="/admin/notifications-management" element={<NotificationsManagement />} />
+        <Route path="/admin/notice-managment" element={<AdminNoticeManagement />} />
         <Route path="/admin/analytics" element={<Analytics />} /> 
         <Route path="/admin/profile" element={<AdminProfile />} />
 

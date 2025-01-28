@@ -8,7 +8,7 @@ import Footer from '../../components/Footer';
 import AdminHome from './AdminHome'; // Placeholder for Admin Home
 import UserManagement from './UserManagement'; // Placeholder for User Management
 import ComplaintsManagement from './ComplaintsManagement'; // Placeholder for Complaints
-import NotificationsManagement from './NotificationsManagement'; // Placeholder for Notifications
+import AdminNoticeManagement from './AdminNoticeManagement';
 import Analytics from './Analytics'; // Placeholder for Analytics
 import AdminProfile from './AdminProfile';
 import AdminSideBar from '../../components/AdminSideBar'; // Custom Admin Sidebar
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
                 <Route path="/" element={<AdminHome />} />
                 <Route path="/user-management" element={<UserManagement />} />
                 <Route path="/complaints-management" element={<ComplaintsManagement />} />
-                <Route path="/notifications-management" element={<NotificationsManagement />} />
+                <Route path="/notice-managment" element={<AdminNoticeManagement/>} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/profile" element={<AdminProfile />} />
                 <Route path="*" element={<Navigate to="/" />} />
