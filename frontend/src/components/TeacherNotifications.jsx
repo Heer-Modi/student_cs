@@ -11,7 +11,7 @@ import {
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import CloseIcon from "@mui/icons-material/Close";
-import TeacherSideBar from "./TeacherSideBar"; // Import Sidebar
+import TeacherSideBar from "./TeacherSidebar"; // Import Sidebar
 import axios from "axios"; // For API requests
 
 const drawerWidth = 240; // Default sidebar width

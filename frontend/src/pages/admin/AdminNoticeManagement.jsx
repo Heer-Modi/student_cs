@@ -1,29 +1,35 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  CssBaseline,
-  Toolbar,
-  Drawer,
-  IconButton,
   Typography,
-  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
   Button,
-  List,
-  ListItem,
-  ListItemText,
+  CssBaseline,
+  Drawer,
+  Toolbar,
+  IconButton,
+  TextField,
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import AdminSidebar from "./../../components/AdminSideBar";
+import AdminSideBar from "../../components/AdminSideBar";
+import axios from "axios";
 
 const drawerWidth = 240;
+const collapsedDrawerWidth = 70;
 
 const AdminNoticeManagement = () => {
-  const [open, setOpen] = useState(true);
-  const [notices, setNotices] = useState([]);
-  const [newNotice, setNewNotice] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(true); // Sidebar toggle state
+  const [notices, setNotices] = useState([]); // List of notices
+  const [newNotice, setNewNotice] = useState(""); // State for new notice input
 
-  const toggleDrawer = () => setOpen(!open);
+  const toggleDrawer = () => setSidebarOpen(!sidebarOpen); // Toggle sidebar open/close
 
   // Fetch notices from the backend
   useEffect(() => {
@@ -43,7 +49,7 @@ const AdminNoticeManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newNotice.trim()) {
-      alert("Notice content cannot be empty");
+      alert("Notice content cannot be empty.");
       return;
     }
     try {
@@ -63,78 +69,122 @@ const AdminNoticeManagement = () => {
     }
   };
 
-  const styles = {
-    container: {
-      margin: "0 auto",
-      maxWidth: "800px",
-      width: "90%",
-      padding: "40px",
-      backgroundColor: "#f5f7fb",
-      borderRadius: "10px",
-      boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-    },
-    listContainer: {
-      marginTop: "20px",
-      backgroundColor: "#e3f2fd",
-      borderRadius: "8px",
-      padding: "20px",
-      boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)",
-    },
-    formGroup: {
-      display: "flex",
-      gap: "10px",
-    },
-    noticeInput: {
-      flexGrow: 1,
-    },
+  // Delete notice
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`/api/notices/cancel/admin/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          }
+        }
+      )
+      alert("Notice deleted successfully");
+      setNotices((prev) => prev.filter((notice) => notice._id !== id));
+    } catch (error) {
+      console.log(error);
+    }
+
+    // Optional: Backend deletion logic can be added here
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
       <CssBaseline />
 
       {/* Sidebar */}
-      <Drawer variant="permanent" sx={{ width: drawerWidth, flexShrink: 0 }}>
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: sidebarOpen ? drawerWidth : collapsedDrawerWidth,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: sidebarOpen ? drawerWidth : collapsedDrawerWidth,
+            transition: "width 0.3s ease",
+            overflowX: "hidden",
+          },
+        }}
+      >
         <Toolbar>
           <IconButton onClick={toggleDrawer}>
-            {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            {sidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </Toolbar>
-        <AdminSidebar open={open} />
+        <AdminSideBar open={sidebarOpen} />
       </Drawer>
 
-      {/* Main content */}
-      <Box component="main" sx={{ flexGrow: 1, padding: "24px", marginLeft: `${drawerWidth}px` }}>
+      {/* Main Content */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          backgroundColor: "#f6f7f9",
+        }}
+      >
         <Toolbar />
-        <div style={styles.container}>
-          <Typography variant="h4" gutterBottom>
-            Admin Notice Management
-          </Typography>
-          <form onSubmit={handleSubmit}>
-            <div style={styles.formGroup}>
-              <TextField
-                value={newNotice}
-                onChange={(e) => setNewNotice(e.target.value)}
-                label="Write a new notice"
-                fullWidth
-                style={styles.noticeInput}
-              />
-              <Button type="submit" variant="contained" color="primary">
-                Publish
-              </Button>
-            </div>
-          </form>
-          <div style={styles.listContainer}>
-            <Typography variant="h6">Published Notices:</Typography>
-            <List>
-              {notices.map((notice, index) => (
-                <ListItem key={index}>
-                  <ListItemText primary={notice.content} secondary={new Date(notice.createdAt).toLocaleString()} />
-                </ListItem>
-              ))}
-            </List>
-          </div>
-        </div>
+        <Typography variant="h4" gutterBottom>
+          Admin Notice Management
+        </Typography>
+        <Typography variant="body1" sx={{ mb: 4 }}>
+          Create and manage notices for all users.
+        </Typography>
+
+        {/* Form for Creating New Notices */}
+        <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <TextField
+              value={newNotice}
+              onChange={(e) => setNewNotice(e.target.value)}
+              label="Write a new notice"
+              variant="outlined"
+              fullWidth
+            />
+            <Button type="submit" variant="contained" color="primary">
+              Publish
+            </Button>
+          </Box>
+        </form>
+
+        {/* Notices Table */}
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell><strong>Notice</strong></TableCell>
+                <TableCell><strong>Published On</strong></TableCell>
+                <TableCell><strong>Actions</strong></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {notices.length > 0 ? (
+                notices.map((notice) => (
+                  <TableRow key={notice._id}>
+                    <TableCell>{notice.content}</TableCell>
+                    <TableCell>
+                      {new Date(notice.createdAt).toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleDelete(notice._id)}
+                      >
+                        Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} align="center">
+                    No notices available.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Box>
     </Box>
   );

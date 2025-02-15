@@ -28,3 +28,18 @@ exports.getNotices = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.deleteNotice = async (req, res) => {
+  try {
+    const {id} = req.params;
+    const notice = await Notice.findById(id)
+    if (!notice) {
+      return res.status(404).json({ message: "Notice not found" });
+    }
+    await Notice.findByIdAndDelete(id);
+    res.status(200).json({ message: "Notice deleted successfully by admin" });
+  } catch (error) {
+    console.error("Error canceling notice by admin:", error);
+    res.status(500).json({ message: "Error canceling notice" });
+  }
+}

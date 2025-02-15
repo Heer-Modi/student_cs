@@ -1,34 +1,43 @@
-// routes/complaintRoutes.js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Complaint = require('../models/complaint');
-const User = require('../models/User'); // Adjust path to your User model
-const { protect, checkRole } = require('../middlewares/authMiddleware'); // Import middleware
+const { 
+  submitComplaint, 
+  getTeacherComplaints, 
+  getAllComplaints, 
+  resolveComplaint,
+  respondToComplaint,
+  getStudentComplaints,
+  cancelStudentComplaint,
+  cancelTeacherComplaint,
+  cancelAdminComplaint  // ✅ New function for admin cancellation
+} = require("../controllers/complaintController");
+const { protect, checkRole } = require("../middlewares/authMiddleware");
 
-// Endpoint to handle complaint submission, accessible only by students
-router.post('/submit', protect, checkRole(['student']), async (req, res) => {
-  const { teacherEmail, description } = req.body;
+// 🟢 **Student submits a complaint**
+router.post("/submit", protect, checkRole(["student"]), submitComplaint);
 
-  try {
-    // Find the teacher by email and ensure role is "teacher"
-    const teacher = await User.findOne({ email: teacherEmail, role: 'teacher' });
-    if (!teacher) {
-      return res.status(404).json({ message: "Teacher not found" });
-    }
+// 🟢 **Student fetches their own complaints**
+router.get("/student-complaints", protect, checkRole(["student"]), getStudentComplaints);
 
-    // Create a new complaint document with the student ID from req.user and the teacher's ID
-    const newComplaint = new Complaint({
-      complaintBy: req.user._id,   // Student's ID from the logged-in user
-      complaintTo: teacher._id,    // Teacher's ID based on email lookup
-      description,
-    });
+// 🟡 **Teacher fetches complaints assigned to them**
+router.get("/teacher-complaints", protect, checkRole(["teacher"]), getTeacherComplaints);
 
-    await newComplaint.save();
-    res.status(200).json({ message: 'Complaint submitted successfully' });
-  } catch (error) {
-    console.error('Error submitting complaint:', error);
-    res.status(500).json({ message: 'An error occurred while submitting the complaint' });
-  }
-});
+// 🟢 **Teacher responds to a complaint & marks it as resolved**
+router.post("/respond", protect, checkRole(["teacher"]), respondToComplaint);
+
+// 🔴 **Admin fetches all complaints**
+router.get("/all", protect, checkRole(["admin"]), getAllComplaints);
+
+// 🟢 **Admin resolves a complaint**
+router.put("/resolve/:id", protect, checkRole(["admin"]), resolveComplaint);
+
+// 🛑 **Teacher cancels a complaint**
+router.delete("/cancel/teacher/:complaintId", protect, checkRole(["teacher"]), cancelTeacherComplaint);
+
+// 🛑 **Student cancels a complaint**
+router.delete("/cancel/student/:complaintId", protect, checkRole(["student"]), cancelStudentComplaint);
+
+// 🛑 **Admin cancels a complaint**
+router.delete("/cancel/admin/:complaintId", protect, checkRole(["admin"]), cancelAdminComplaint);
 
 module.exports = router;

@@ -1,235 +1,223 @@
 import React, { useState } from "react";
 import {
   Box,
-  CssBaseline,
-  Toolbar,
-  Drawer,
   Typography,
-  Button,
   TextField,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
+  Button,
+  CssBaseline,
+  Drawer,
+  Toolbar,
   IconButton,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import AdminSideBar from "./../../components/AdminSideBar";
+import AdminSideBar from "../../components/AdminSideBar";
 
 const drawerWidth = 240;
+const collapsedDrawerWidth = 70;
 
 const UserManagement = () => {
-  const [teachers, setTeachers] = useState([]);
-  const [classes, setClasses] = useState([]);
-  const [students, setStudents] = useState([]);
-  const [classToAdd, setClassToAdd] = useState("");
-  const [teacherToAdd, setTeacherToAdd] = useState("");
-  const [studentToAdd, setStudentToAdd] = useState("");
-  const [selectedClass, setSelectedClass] = useState("");
-  const [open, setOpen] = useState(true);
+  const [classes, setClasses] = useState([]); // List of classes
+  const [students, setStudents] = useState([]); // List of students
+  const [teachers, setTeachers] = useState(["Mr. Smith", "Mrs. Brown"]); // List of teachers
+  const [className, setClassName] = useState(""); // Class input
+  const [studentName, setStudentName] = useState(""); // Student name input
+  const [studentId, setStudentId] = useState(""); // Student ID input
+  const [selectedClass, setSelectedClass] = useState(""); // Selected class for allocation
+  const [allocatedTeacher, setAllocatedTeacher] = useState(""); // Teacher to be allocated
+  const [sidebarOpen, setSidebarOpen] = useState(true); // Sidebar toggle state
 
-  const toggleDrawer = () => setOpen(!open);
+  const toggleDrawer = () => setSidebarOpen(!sidebarOpen); // Toggle sidebar open/closed
 
-  const styles = {
-    drawerStyled: {
-      width: drawerWidth,
-      flexShrink: 0,
-      "& .MuiDrawer-paper": {
-        width: open ? drawerWidth : "70px",
-        transition: "width 0.3s ease",
-        overflowX: "hidden",
-      },
-    },
-    pageWrapper: {
-      display: "flex",
-      minHeight: "100vh",
-    },
-    contentWrapper: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: "100vh",
-      padding: "20px",
-      transition: "margin-left 0.3s ease",
-      marginLeft: open ? `${drawerWidth}px` : "70px",
-    },
-    rowContainer: {
-      display: "flex",
-      justifyContent: "center",
-      gap: "30px",
-      marginBottom: "30px",
-      width: "100%",
-    },
-    container: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "flex-start",
-      padding: "40px",
-      width: "100%",
-      maxWidth: "350px", // Smaller width for Add Teacher and Add Student
-      backgroundColor: "#f6d673",
-      borderRadius: "10px",
-      boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-      color: "#10184b",
-    },
-    addClassContainer: {
-      maxWidth: "500px", // Larger container for Add Class
-    },
-    sectionTitle: {
-      marginBottom: "20px",
-      color: "#10184b",
-    },
-    formField: {
-      marginBottom: "20px",
-      width: "100%",
-    },
-    button: {
-      backgroundColor: "#3f51b5",
-      color: "#fff",
-      "&:hover": {
-        backgroundColor: "#303f9f",
-      },
-    },
-  };
-
-  const handleAddTeacher = () => {
-    if (teacherToAdd.trim()) {
-      setTeachers([...teachers, teacherToAdd]);
-      setTeacherToAdd("");
+  // Create a new class
+  const handleCreateClass = () => {
+    if (className.trim() && !classes.includes(className)) {
+      setClasses([...classes, className]);
+      setClassName("");
     }
   };
 
-  const handleAddClass = () => {
-    if (classToAdd.trim()) {
-      setClasses([...classes, classToAdd]);
-      setClassToAdd("");
-    }
-  };
-
+  // Add a student to a class
   const handleAddStudent = () => {
-    if (studentToAdd.trim() && selectedClass) {
-      setStudents([...students, { name: studentToAdd, className: selectedClass }]);
-      setStudentToAdd("");
+    if (studentName.trim() && studentId.trim() && selectedClass) {
+      setStudents([
+        ...students,
+        { id: studentId, name: studentName, className: selectedClass },
+      ]);
+      setStudentName("");
+      setStudentId("");
+    }
+  };
+
+  // Allocate a teacher to all students in a class
+  const handleAllocateTeacher = () => {
+    if (allocatedTeacher && selectedClass) {
+      setStudents((prev) =>
+        prev.map((student) =>
+          student.className === selectedClass
+            ? { ...student, teacher: allocatedTeacher }
+            : student
+        )
+      );
+      setAllocatedTeacher("");
     }
   };
 
   return (
-    <Box sx={styles.pageWrapper}>
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
       <CssBaseline />
-      <Drawer variant="permanent" sx={styles.drawerStyled}>
+
+      {/* Sidebar */}
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: sidebarOpen ? drawerWidth : collapsedDrawerWidth,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: sidebarOpen ? drawerWidth : collapsedDrawerWidth,
+            transition: "width 0.3s ease",
+            overflowX: "hidden",
+          },
+        }}
+      >
         <Toolbar>
           <IconButton onClick={toggleDrawer}>
-            {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            {sidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </Toolbar>
-        <AdminSideBar open={open} />
+        <AdminSideBar open={sidebarOpen} />
       </Drawer>
 
-      <Box sx={styles.contentWrapper}>
-        {/* Row: Add Teacher and Add Student */}
-        <Box sx={styles.rowContainer}>
-          <Box sx={styles.container}>
-            <Typography variant="h5" sx={styles.sectionTitle}>
-              Add Teacher
-            </Typography>
-            <TextField
-              label="Teacher's Name"
-              value={teacherToAdd}
-              onChange={(e) => setTeacherToAdd(e.target.value)}
-              variant="outlined"
-              sx={styles.formField}
-            />
-            <Button variant="contained" sx={styles.button} onClick={handleAddTeacher}>
-              Add Teacher
-            </Button>
-            <Typography variant="h6" sx={{ marginTop: "20px" }}>
-              Teachers List
-            </Typography>
-            <ul>
-              {teachers.map((teacher, index) => (
-                <li key={index}>{teacher}</li>
-              ))}
-            </ul>
-          </Box>
+      {/* Main Content */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          backgroundColor: "#f6f7f9",
+        }}
+      >
+        <Toolbar />
+        <Typography variant="h4" gutterBottom>
+          User Management
+        </Typography>
 
-          <Box sx={styles.container}>
-            <Typography variant="h5" sx={styles.sectionTitle}>
-              Add Student
-            </Typography>
+        {/* Create Class Section */}
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6">Create Class</Typography>
+          <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
             <TextField
-              label="Student's Name"
-              value={studentToAdd}
-              onChange={(e) => setStudentToAdd(e.target.value)}
-              variant="outlined"
-              sx={styles.formField}
+              label="Class Name"
+              value={className}
+              onChange={(e) => setClassName(e.target.value)}
+              fullWidth
+            />
+            <Button variant="contained" onClick={handleCreateClass}>
+              Create
+            </Button>
+          </Box>
+          <Typography variant="body1" sx={{ mt: 2 }}>
+            Classes: {classes.length > 0 ? classes.join(", ") : "No classes created yet."}
+          </Typography>
+        </Box>
+
+        {/* Add Student Section */}
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6">Add Student</Typography>
+          <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
+            <TextField
+              label="Student Name"
+              value={studentName}
+              onChange={(e) => setStudentName(e.target.value)}
+              fullWidth
             />
             <TextField
-              select
-              SelectProps={{ native: true }}
-              label="Select Class"
-              value={selectedClass}
-              onChange={(e) => setSelectedClass(e.target.value)}
-              variant="outlined"
-              sx={styles.formField}
-            >
-              <option value="">None</option>
-              {classes.map((className, index) => (
-                <option key={index} value={className}>
-                  {className}
-                </option>
-              ))}
-            </TextField>
-            <Button variant="contained" sx={styles.button} onClick={handleAddStudent}>
+              label="Student ID"
+              value={studentId}
+              onChange={(e) => setStudentId(e.target.value)}
+              fullWidth
+            />
+            <FormControl fullWidth>
+              <InputLabel>Select Class</InputLabel>
+              <Select
+                value={selectedClass}
+                onChange={(e) => setSelectedClass(e.target.value)}
+              >
+                {classes.map((cls) => (
+                  <MenuItem key={cls} value={cls}>
+                    {cls}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button variant="contained" onClick={handleAddStudent}>
               Add Student
             </Button>
-            <Typography variant="h6" sx={{ marginTop: "20px" }}>
-              Students List
-            </Typography>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Class</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {students.map((student, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{student.name}</TableCell>
-                    <TableCell>{student.className}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
           </Box>
         </Box>
 
-        {/* Add Class Section */}
-        <Box sx={{ ...styles.container, ...styles.addClassContainer }}>
-          <Typography variant="h5" sx={styles.sectionTitle}>
-            Add Class
-          </Typography>
-          <TextField
-            label="Class Name"
-            value={classToAdd}
-            onChange={(e) => setClassToAdd(e.target.value)}
-            variant="outlined"
-            sx={styles.formField}
-          />
-          <Button variant="contained" sx={styles.button} onClick={handleAddClass}>
-            Add Class
-          </Button>
-          <Typography variant="h6" sx={{ marginTop: "20px" }}>
-            Classes List
-          </Typography>
-          <ul>
-            {classes.map((className, index) => (
-              <li key={index}>{className}</li>
+        {/* Allocate Teacher Section */}
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6">Allocate Teacher</Typography>
+          <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
+            <FormControl fullWidth>
+              <InputLabel>Select Class</InputLabel>
+              <Select
+                value={selectedClass}
+                onChange={(e) => setSelectedClass(e.target.value)}
+              >
+                {classes.map((cls) => (
+                  <MenuItem key={cls} value={cls}>
+                    {cls}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth>
+              <InputLabel>Select Teacher</InputLabel>
+              <Select
+                value={allocatedTeacher}
+                onChange={(e) => setAllocatedTeacher(e.target.value)}
+              >
+                {teachers.map((teacher) => (
+                  <MenuItem key={teacher} value={teacher}>
+                    {teacher}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button variant="contained" onClick={handleAllocateTeacher}>
+              Allocate Teacher
+            </Button>
+          </Box>
+        </Box>
+
+        {/* Students List */}
+        <Box>
+          <Typography variant="h6">Students List</Typography>
+          <List>
+            {students.map((student, index) => (
+              <React.Fragment key={index}>
+                <ListItem>
+                  <ListItemText
+                    primary={`${student.name} (ID: ${student.id})`}
+                    secondary={`Class: ${student.className} | Teacher: ${
+                      student.teacher || "Not Allocated"
+                    }`}
+                  />
+                </ListItem>
+                <Divider />
+              </React.Fragment>
             ))}
-          </ul>
+          </List>
         </Box>
       </Box>
     </Box>

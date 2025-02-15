@@ -22,7 +22,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import ComplaintsManagement from './pages/admin/ComplaintsManagement';
 import AdminNoticeManagement from './pages/admin/AdminNoticeManagement';
-import Analytics from './pages/admin/Analytics';
+
 import AdminProfile from './pages/admin/AdminProfile';
 
 // Common Components
@@ -69,7 +69,7 @@ function AppContent() {
     '/admin/user-management',
     '/admin/complaints-management',
     '/admin/notice-managment',
-    '/admin/analytics',
+    
     '/admin/profile'
   ];
 
@@ -121,7 +121,7 @@ function AppContent() {
         <Route path="/admin/user-management" element={<UserManagement />} />
         <Route path="/admin/complaints-management" element={<ComplaintsManagement />} />
         <Route path="/admin/notice-managment" element={<AdminNoticeManagement />} />
-        <Route path="/admin/analytics" element={<Analytics />} /> 
+        
         <Route path="/admin/profile" element={<AdminProfile />} />
 
         {/* Common Routes */}

@@ -5,7 +5,7 @@ import HomeIcon from '@mui/icons-material/Home'; // Import Home Icon
 import GroupIcon from '@mui/icons-material/Group';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import AnalyticsIcon from '@mui/icons-material/Analytics';
+
 import PersonIcon from '@mui/icons-material/Person'; // Import Profile Icon
 
 // Styles
@@ -47,7 +47,7 @@ const AdminSideBar = ({ open }) => {
     { text: 'User Management', icon: <GroupIcon sx={styles.icon} />, path: '/admin/user-management' },
     { text: 'Complaints Management', icon: <BugReportIcon sx={styles.icon} />, path: '/admin/complaints-management' },
     { text: 'Notice', icon: <NotificationsIcon sx={styles.icon} />, path: '/admin/notice-managment' },
-    { text: 'Analytics', icon: <AnalyticsIcon sx={styles.icon} />, path: '/admin/analytics' },
+    
     { text: 'Profile', icon: <PersonIcon sx={styles.icon} />, path: '/admin/profile' },
   ];
 

@@ -1,12 +1,12 @@
+const mongoose = require("mongoose");
 
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-
-const ComplaintSchema = new Schema({
-  complaintBy: { type: Schema.Types.ObjectId, ref: 'Student', required: true },
-  complaintTo: { type: Schema.Types.ObjectId, ref: 'Teacher', required: true },
-  description: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
+const ComplaintSchema = new mongoose.Schema({
+  complaintBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Student who filed the complaint
+  complaintTo: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Teacher the complaint is directed to
+  description: { type: String, required: true }, // Complaint details
+  response: { type: String, default: "" }, // Admin's response
+  status: { type: String, enum: ["Pending", "Cancelled", "Resolved"], default: "Pending" }, // Complaint status
+  createdAt: { type: Date, default: Date.now }, // Timestamp
 });
 
-module.exports = mongoose.model('Complaint', ComplaintSchema);
+module.exports = mongoose.model("Complaint", ComplaintSchema);

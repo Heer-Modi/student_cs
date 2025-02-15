@@ -6,6 +6,11 @@ const noticeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    createdAt: {
+      type: Date,
+      default: Date.now, 
+      expires: 259200,
+    },
   },
   { timestamps: true }
 );

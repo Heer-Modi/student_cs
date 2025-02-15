@@ -20,62 +20,78 @@ import {
   DialogContentText,
   DialogTitle,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import AdminSideBar from "../../components/AdminSideBar";
+import axios from "axios";
 
 const drawerWidth = 240;
 const collapsedDrawerWidth = 70;
 
 const ComplaintsManagement = () => {
-  const [complaints, setComplaints] = useState([]); // State for storing complaints
+  const [complaints, setComplaints] = useState([]); // Store complaints from API
+  const [loading, setLoading] = useState(true); // Loading state for API call
   const [sidebarOpen, setSidebarOpen] = useState(true); // Sidebar toggle state
   const [dialogOpen, setDialogOpen] = useState(false); // Dialog state for resolution
   const [selectedComplaint, setSelectedComplaint] = useState(null); // Complaint being resolved
   const [resolutionText, setResolutionText] = useState(""); // Resolution text
 
-  const toggleDrawer = () => setSidebarOpen(!sidebarOpen); // Toggle sidebar open/closed
+  const toggleDrawer = () => setSidebarOpen(!sidebarOpen);
 
-  // Mock complaints data
+  // 🔥 Fetch complaints from the backend API
   useEffect(() => {
-    const mockData = [
-      {
-        id: 1,
-        student: "John Doe",
-        to: "Mr. Smith",
-        complaint: "Unable to access study materials.",
-        resolvedByTeacher: false,
-        adminResolved: false,
-      },
-      {
-        id: 2,
-        student: "Emily Johnson",
-        to: "Mrs. Brown",
-        complaint: "Issue with grading system.",
-        resolvedByTeacher: true,
-        adminResolved: false,
-      },
-    ];
-    setComplaints(mockData);
+    const fetchComplaints = async () => {
+      try {
+        const response = await axios.get("/api/complaints/all", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const filteredComplaints = response.data.filter((complaint)=>complaint.status === "Pending")
+        setComplaints(filteredComplaints); // Store fetched complaints
+      } catch (error) {
+        console.error("Error fetching complaints:", error);
+      } finally {
+        setLoading(false); // Stop loading spinner
+      }
+    };
+
+    fetchComplaints();
   }, []);
 
-  // Function to update complaint resolution by admin
-  const handleResolve = () => {
-    setComplaints((prev) =>
-      prev.map((complaint) =>
-        complaint.id === selectedComplaint.id
-          ? { ...complaint, adminResolved: true }
-          : complaint
-      )
-    );
-    setDialogOpen(false);
-    setResolutionText(""); // Reset resolution text
-  };
+  // 🔹 Admin resolves a complaint
+  const handleResolve = async () => {
+    if (!selectedComplaint || !resolutionText.trim()) return;
 
-  // Function to delete complaint
-  const handleDelete = (id) => {
-    setComplaints((prev) => prev.filter((complaint) => complaint.id !== id));
+    try {
+      const response = await axios.put(
+        `/api/complaints/resolve/${selectedComplaint._id}`,
+        { response: resolutionText },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      // ✅ Update the UI after successful resolution
+      setComplaints((prev) =>
+        prev.map((complaint) =>
+          complaint._id === selectedComplaint._id
+            ? { ...complaint, status: "Resolved", response: resolutionText }
+            : complaint
+        )
+      );
+
+      alert("Complaint resolved successfully!");
+      setDialogOpen(false);
+      setResolutionText(""); // Reset resolution text
+    } catch (error) {
+      console.error("Error resolving complaint:", error);
+      alert("Failed to resolve complaint.");
+    }
   };
 
   return (
@@ -120,55 +136,54 @@ const ComplaintsManagement = () => {
           View and manage complaints submitted by students.
         </Typography>
 
-        {/* Complaints Table */}
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell><strong>Student</strong></TableCell>
-                <TableCell><strong>To</strong></TableCell>
-                <TableCell><strong>Complaint</strong></TableCell>
-                <TableCell><strong>Resolved by Teacher</strong></TableCell>
-                <TableCell><strong>Resolved by Admin</strong></TableCell>
-                <TableCell><strong>Actions</strong></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {complaints.map((complaint) => (
-                <TableRow key={complaint.id}>
-                  <TableCell>{complaint.student}</TableCell>
-                  <TableCell>{complaint.to}</TableCell>
-                  <TableCell>{complaint.complaint}</TableCell>
-                  <TableCell>{complaint.resolvedByTeacher ? "Yes" : "No"}</TableCell>
-                  <TableCell>{complaint.adminResolved ? "Yes" : "No"}</TableCell>
-                  <TableCell>
-                    <Box sx={{ display: "flex", gap: 1 }}>
-                      {!complaint.adminResolved && (
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => {
-                            setSelectedComplaint(complaint);
-                            setDialogOpen(true);
-                          }}
-                        >
-                          Resolve
-                        </Button>
-                      )}
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => handleDelete(complaint.id)}
-                      >
-                        Delete
-                      </Button>
-                    </Box>
-                  </TableCell>
+        {/* Show loading spinner while fetching complaints */}
+        {loading ? (
+          <CircularProgress />
+        ) : complaints.length === 0 ? (
+          <Typography>No complaints found.</Typography>
+        ) : (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell><strong>Student</strong></TableCell>
+                  <TableCell><strong>To</strong></TableCell>
+                  <TableCell><strong>Complaint</strong></TableCell>
+                  <TableCell><strong>Status</strong></TableCell>
+                  <TableCell><strong>Response</strong></TableCell>
+                  <TableCell><strong>Actions</strong></TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {complaints.map((complaint) => (
+                  <TableRow key={complaint._id}>
+                    <TableCell>{complaint.complaintBy?.name || "Unknown"}</TableCell>
+                    <TableCell>{complaint.complaintTo?.name || "Unknown"}</TableCell>
+                    <TableCell>{complaint.description}</TableCell>
+                    <TableCell>{complaint.status}</TableCell>
+                    <TableCell>{complaint.response || "No response yet"}</TableCell>
+                    <TableCell>
+                      <Box sx={{ display: "flex", gap: 1 }}>
+                        {complaint.status === "Pending" && (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => {
+                              setSelectedComplaint(complaint);
+                              setDialogOpen(true);
+                            }}
+                          >
+                            Resolve
+                          </Button>
+                        )}                        
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </Box>
 
       {/* Resolution Dialog */}
@@ -177,8 +192,8 @@ const ComplaintsManagement = () => {
         <DialogContent>
           <DialogContentText>
             Provide a resolution for the complaint submitted by{" "}
-            <strong>{selectedComplaint?.student}</strong> to{" "}
-            <strong>{selectedComplaint?.to}</strong>.
+            <strong>{selectedComplaint?.complaintBy?.name}</strong> to{" "}
+            <strong>{selectedComplaint?.complaintTo?.name}</strong>.
           </DialogContentText>
           <TextField
             autoFocus
