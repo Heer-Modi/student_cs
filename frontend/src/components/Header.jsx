@@ -1,10 +1,12 @@
 // Header.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Avatar, Menu, MenuItem } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Header = ({ title, open, profilePhoto }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [profile, setProfile] = useState({});
   const navigate = useNavigate();
 
   const handleProfileClick = (event) => {
@@ -24,6 +26,25 @@ const Header = ({ title, open, profilePhoto }) => {
     navigate('/');
     handleClose();
   };
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token"); // Fetch token from localStorage
+        const response = await axios.get("/api/students/profile", {
+          headers: {
+            Authorization: `Bearer ${token}`, // Pass token for authorization
+          },
+        });
+        console.log(response.data)
+        setProfile(response.data.student);
+      } catch (error) {
+        console.error("Error fetching student profile:", error);
+      }
+    };
+    fetchProfile();
+  }, []
+  )
 
   return (
     <AppBar 
@@ -51,7 +72,7 @@ const Header = ({ title, open, profilePhoto }) => {
           {title}
         </Typography>
         <IconButton onClick={handleProfileClick} sx={{ borderRadius: '50%' }}>
-          <Avatar src={profilePhoto || "path/to/default/photo.jpg"} alt="Profile" sx={{ width: 45, height: 45, border: '2px solid #f6d673' }} />
+          <Avatar src={profile.photo || "path/to/default/photo.jpg"} alt="Profile" sx={{ width: 45, height: 45, border: '2px solid #f6d673' }} />
         </IconButton>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
           <Link to="/student/profile" onClick={handleClose} style={{ textDecoration: 'none', color: 'inherit' }}>
