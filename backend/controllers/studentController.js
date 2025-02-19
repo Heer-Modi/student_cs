@@ -1,15 +1,15 @@
-// studentController.js
-
 const path = require("path");
 const Student = require("../models/User");
 const uploadOnCloudinary = require("../utils/cloudinary");
 
+// 🟢 Save or Update Student Profile
 exports.saveStudentProfile = async (req, res) => {
   try {
     const {
       _id,
       firstName,
       lastName,
+      rollNumber, // ✅ Added Roll Number
       Class,
       parentsName,
       parentsPhone,
@@ -28,31 +28,31 @@ exports.saveStudentProfile = async (req, res) => {
       }
     }
 
-    // Check if student already exists and update, else create new student profile
+    // ✅ Check if student already exists and update, else create new student profile
     const student = await Student.findOneAndUpdate(
-      { _id: _id }, // Make sure to pass the correct identifier, using `_id` from req.body or req.params
+      { _id: _id }, 
       {
         firstName,
         lastName,
+        rollNumber, // ✅ Added Roll Number
         Class,
         parentsName,
         parentsPhone,
         address,
         phone,
-        photo: photoUploadResponse?.url, // Only update photo if a new one is provided
+        photo: photoUploadResponse?.url, 
       },
-      { new: true, upsert: true } // Create if doesn't exist
+      { new: true, upsert: true }
     );
 
-    res
-      .status(200)
-      .json({ message: "Student profile saved successfully", student });
+    res.status(200).json({ message: "Student profile saved successfully", student });
   } catch (error) {
     console.error("Error saving student profile:", error);
     res.status(500).json({ message: "Error saving student profile" });
   }
 };
 
+// 🟢 Fetch Student Profile
 exports.fetchStudentProfile = async (req, res) => {
   try {
     const student = await Student.findOne({ _id: req.user.id });

@@ -34,7 +34,7 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setProfile(response.data.student  );
+        setProfile(response.data.student);
         console.log("Profile data:", response.data);
         if (response.data.photo) setPhotoUrl(response.data.photo);
       } catch (error) {
@@ -48,6 +48,7 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
     firstName = "",
     middleName = "",
     lastName = "",
+    rollNumber = "",
     Class = "",
     parentsName = "",
     parentsPhone = "",
@@ -63,7 +64,7 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
     if ((name === "phone" || name === "parentsPhone") && (!/^\d*$/.test(value) || value.length > 10)) {
       return;
     }
-    
+
     setProfile({ ...profile, [name]: value });
   };
 
@@ -150,6 +151,17 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
       gridColumn: "span 2",
       padding: "12px",
       backgroundColor: "#545eb5",
+      color: "#fff",
+      border: "none",
+      borderRadius: "5px",
+      fontSize: "16px",
+      cursor: "pointer",
+      marginTop: "20px",
+    },
+    cancelButton: {
+      gridColumn: "span 2",
+      padding: "12px",
+      backgroundColor: "#ff4d4d", // ✅ Red color for Cancel button
       color: "#fff",
       border: "none",
       borderRadius: "5px",
@@ -269,12 +281,22 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
               <div style={styles.formGroup}>
                 <input
                   type="text"
+                  placeholder="Roll Number"
+                  name="rollNumber"
+                  value={rollNumber}
+                  onChange={handleChange}
+                  style={styles.input}
+                  required
+                />
+                <input
+                  type="text"
                   placeholder="Class"
                   name="Class"
                   value={Class}
                   onChange={handleChange}
                   style={styles.input}
                 />
+
                 <input
                   type="text"
                   placeholder="Phone Number"
@@ -326,9 +348,10 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
                 <button type="submit" style={styles.button}>
                   Save Profile
                 </button>
-                <button onClick={handleCancelEditing} style={styles.button}>
-                  Update
+                <button onClick={handleCancelEditing} style={styles.cancelButton}>
+                  Cancel
                 </button>
+
               </div>
             </form>
           ) : (
@@ -337,6 +360,7 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
               <Typography variant="h6" sx={{ mt: 2 }}>
                 {firstName} {lastName}
               </Typography>
+              <Typography>Roll Number: {rollNumber}</Typography>
               <Typography>Class: {Class}</Typography>
               <Typography>Phone: {phone}</Typography>
               <Typography>Parents' Name: {parentsName}</Typography>
