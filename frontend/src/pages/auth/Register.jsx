@@ -9,7 +9,7 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('teacher'); // Default role is Student
     const [idNo, setIdNo] = useState(''); // Student ID No
-    const [studentClass, setStudentClass] = useState(''); // Student Class
+    const [department, setDepartment] = useState(''); // Student Class
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -34,7 +34,8 @@ const Register = () => {
                 email,
                 password,
                 role,
-                ...(role === 'student' && { rollNumber: idNo, Class: studentClass }) // Include only for students
+                department,
+                ...(role === 'student' && { rollNumber: idNo }) // Include only for students
             });
 
             alert(response.data.message);
@@ -85,6 +86,15 @@ const Register = () => {
                             required
                         />
 
+                        <input
+                            type="text"
+                            placeholder="Department"
+                            value={department}
+                            onChange={(e) => setDepartment(e.target.value)}
+                            style={inputStyle}
+                            required
+                        />
+
                         {/* Role Selection */}
                         <select
                             value={role}
@@ -105,14 +115,6 @@ const Register = () => {
                                     placeholder="ID No"
                                     value={idNo}
                                     onChange={(e) => setIdNo(e.target.value)}
-                                    style={inputStyle}
-                                    required
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Class"
-                                    value={studentClass}
-                                    onChange={(e) => setStudentClass(e.target.value)}
                                     style={inputStyle}
                                     required
                                 />

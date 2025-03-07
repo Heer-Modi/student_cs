@@ -45,11 +45,12 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
   }, []);
 
   const {
+    name = "",
     firstName = "",
     middleName = "",
     lastName = "",
     rollNumber = "",
-    Class = "",
+    department = "",
     parentsName = "",
     parentsPhone = "",
     address = "",
@@ -146,6 +147,9 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
       border: "1px solid #ccc",
       borderRadius: "5px",
       fontSize: "16px",
+    },
+    nameInput: {
+      marginBottom: "20px",
     },
     button: {
       gridColumn: "span 2",
@@ -257,17 +261,17 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
                 </label>
               </div>
 
-              <div style={styles.formGroup}>
+              <div style={styles.nameInput}>
                 <input
                   type="text"
-                  placeholder="First Name"
-                  name="firstName"
-                  value={firstName}
+                  placeholder="Full Name"
+                  name="name"
+                  value={name}
                   onChange={handleChange}
                   style={styles.input}
                   required
                 />
-                <input
+                {/* <input
                   type="text"
                   placeholder="Last Name"
                   name="lastName"
@@ -275,7 +279,7 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
                   onChange={handleChange}
                   style={styles.input}
                   required
-                />
+                /> */}
               </div>
 
               <div style={styles.formGroup}>
@@ -290,9 +294,9 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
                 />
                 <input
                   type="text"
-                  placeholder="Class"
-                  name="Class"
-                  value={Class}
+                  placeholder="department"
+                  name="department"
+                  value={department}
                   onChange={handleChange}
                   style={styles.input}
                 />
@@ -358,10 +362,10 @@ const StudentProfile = ({ refreshProfilePhoto }) => {
             <div style={styles.summaryContainer}>
               <Avatar src={photo} style={styles.photo} />
               <Typography variant="h6" sx={{ mt: 2 }}>
-                {firstName} {lastName}
+                {name}
               </Typography>
               <Typography>Roll Number: {rollNumber}</Typography>
-              <Typography>Class: {Class}</Typography>
+              <Typography>Department: {department}</Typography>
               <Typography>Phone: {phone}</Typography>
               <Typography>Parents' Name: {parentsName}</Typography>
               <Typography>Parents' Phone: {parentsPhone}</Typography>

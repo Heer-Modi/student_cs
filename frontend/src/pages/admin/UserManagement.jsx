@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import {
   Box,
   Typography,
@@ -8,14 +9,6 @@ import {
   Drawer,
   Toolbar,
   IconButton,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -25,69 +18,110 @@ const drawerWidth = 240;
 const collapsedDrawerWidth = 70;
 
 const UserManagement = () => {
-  const [classes, setClasses] = useState([]); // List of classes
-  const [students, setStudents] = useState([]); // List of students
-  const [teachers, setTeachers] = useState(["Mr. Smith", "Mrs. Brown"]); // List of teachers
-  const [className, setClassName] = useState(""); // Class input
-  const [studentName, setStudentName] = useState(""); // Student name input
-  const [studentId, setStudentId] = useState(""); // Student ID input
-  const [selectedClass, setSelectedClass] = useState(""); // Selected class for allocation
-  const [allocatedTeacher, setAllocatedTeacher] = useState(""); // Teacher to be allocated
   const [sidebarOpen, setSidebarOpen] = useState(true); // Sidebar toggle state
+  const [studentIdFrom, setStudentIdFrom] = useState(""); // Starting Student ID
+  const [studentIdTo, setStudentIdTo] = useState(""); // Ending Student ID
+  const [teacherEmail, setTeacherEmail] = useState(""); // Counselor's Email
+  const [message, setMessage] = useState(""); // Success/Error message
 
   const toggleDrawer = () => setSidebarOpen(!sidebarOpen); // Toggle sidebar open/closed
 
-  // Create a new class
-  const handleCreateClass = () => {
-    if (className.trim() && !classes.includes(className)) {
-      setClasses([...classes, className]);
-      setClassName("");
+  // Function to Allocate Students to a Counselor (Connects to Backend)
+  const handleAllocateStudentsToCounselor = async () => {
+    if (!studentIdFrom || !studentIdTo || !teacherEmail) {
+      setMessage("Please fill in all fields before allocating students.");
+      return;
     }
-  };
 
-  // Add a student to a class
-  const handleAddStudent = () => {
-    if (studentName.trim() && studentId.trim() && selectedClass) {
-      setStudents([
-        ...students,
-        { id: studentId, name: studentName, className: selectedClass },
-      ]);
-      setStudentName("");
-      setStudentId("");
-    }
-  };
-
-  // Allocate a teacher to all students in a class
-  const handleAllocateTeacher = () => {
-    if (allocatedTeacher && selectedClass) {
-      setStudents((prev) =>
-        prev.map((student) =>
-          student.className === selectedClass
-            ? { ...student, teacher: allocatedTeacher }
-            : student
-        )
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/user-management/allocate-students",
+        { studentIdFrom, studentIdTo, teacherEmail }
       );
-      setAllocatedTeacher("");
+
+      setMessage(response.data.message);
+      setStudentIdFrom("");
+      setStudentIdTo("");
+      setTeacherEmail("");
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Error allocating students.");
     }
+  };
+
+  // Styles (Using Previously Provided CSS)
+  const styles = {
+    container: {
+      margin: "0 auto",
+      maxWidth: "600px",
+      width: "90%",
+      padding: "40px",
+      backgroundColor: "#f5f7fb",
+      borderRadius: "10px",
+      boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+      textAlign: "center",
+    },
+    formGroup: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "20px",
+      marginBottom: "20px",
+    },
+    input: {
+      width: "100%",
+      padding: "10px",
+      border: "1px solid #ccc",
+      borderRadius: "5px",
+      fontSize: "16px",
+    },
+    button: {
+      padding: "12px",
+      backgroundColor: "#545eb5",
+      color: "#fff",
+      border: "none",
+      borderRadius: "5px",
+      fontSize: "16px",
+      cursor: "pointer",
+      transition: "background-color 0.3s ease",
+    },
+    buttonHover: {
+      backgroundColor: "#3d4a9b",
+    },
+    message: {
+      color: "#d32f2f",
+      textAlign: "center",
+      marginTop: "10px",
+    },
+    mainContent: {
+      flexGrow: 1,
+      padding: "24px",
+      backgroundColor: "#f6f7f9",
+      transition: "margin-left 0.3s ease",
+      marginLeft: sidebarOpen ? `${drawerWidth}px` : "70px",
+    },
+    drawerStyled: {
+      width: drawerWidth,
+      flexShrink: 0,
+      "& .MuiDrawer-paper": {
+        width: sidebarOpen ? drawerWidth : "70px",
+        transition: "width 0.3s ease",
+        overflowX: "hidden",
+      },
+    },
+    formTitle: {
+      color: "#545eb5",
+      marginBottom: "20px",
+      fontSize: "24px",
+      fontWeight: "600",
+      textAlign: "center",
+    },
   };
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <CssBaseline />
 
       {/* Sidebar */}
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: sidebarOpen ? drawerWidth : collapsedDrawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: sidebarOpen ? drawerWidth : collapsedDrawerWidth,
-            transition: "width 0.3s ease",
-            overflowX: "hidden",
-          },
-        }}
-      >
+      <Drawer variant="permanent" sx={styles.drawerStyled}>
         <Toolbar>
           <IconButton onClick={toggleDrawer}>
             {sidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
@@ -97,128 +131,54 @@ const UserManagement = () => {
       </Drawer>
 
       {/* Main Content */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          backgroundColor: "#f6f7f9",
-        }}
-      >
+      <Box component="main" sx={styles.mainContent}>
         <Toolbar />
-        <Typography variant="h4" gutterBottom>
-          User Management
-        </Typography>
-
-        {/* Create Class Section */}
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h6">Create Class</Typography>
-          <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
-            <TextField
-              label="Class Name"
-              value={className}
-              onChange={(e) => setClassName(e.target.value)}
-              fullWidth
-            />
-            <Button variant="contained" onClick={handleCreateClass}>
-              Create
-            </Button>
-          </Box>
-          <Typography variant="body1" sx={{ mt: 2 }}>
-            Classes: {classes.length > 0 ? classes.join(", ") : "No classes created yet."}
+        <div style={styles.container}>
+          <Typography variant="h4" component="h2" style={styles.formTitle}>
+            Allocate Students to Counselor
           </Typography>
-        </Box>
 
-        {/* Add Student Section */}
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h6">Add Student</Typography>
-          <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
-            <TextField
-              label="Student Name"
-              value={studentName}
-              onChange={(e) => setStudentName(e.target.value)}
-              fullWidth
-            />
-            <TextField
-              label="Student ID"
-              value={studentId}
-              onChange={(e) => setStudentId(e.target.value)}
-              fullWidth
-            />
-            <FormControl fullWidth>
-              <InputLabel>Select Class</InputLabel>
-              <Select
-                value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value)}
-              >
-                {classes.map((cls) => (
-                  <MenuItem key={cls} value={cls}>
-                    {cls}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Button variant="contained" onClick={handleAddStudent}>
-              Add Student
-            </Button>
-          </Box>
-        </Box>
+          <form onSubmit={(e) => e.preventDefault()}>
+            <div style={styles.formGroup}>
+              <TextField
+                label="Student ID From"
+                variant="outlined"
+                fullWidth
+                value={studentIdFrom}
+                onChange={(e) => setStudentIdFrom(e.target.value)}
+                required
+              />
+              <TextField
+                label="Student ID To"
+                variant="outlined"
+                fullWidth
+                value={studentIdTo}
+                onChange={(e) => setStudentIdTo(e.target.value)}
+                required
+              />
+              <TextField
+                label="Counselor's Email"
+                variant="outlined"
+                fullWidth
+                value={teacherEmail}
+                onChange={(e) => setTeacherEmail(e.target.value)}
+                required
+              />
+            </div>
 
-        {/* Allocate Teacher Section */}
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h6">Allocate Teacher</Typography>
-          <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
-            <FormControl fullWidth>
-              <InputLabel>Select Class</InputLabel>
-              <Select
-                value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value)}
-              >
-                {classes.map((cls) => (
-                  <MenuItem key={cls} value={cls}>
-                    {cls}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel>Select Teacher</InputLabel>
-              <Select
-                value={allocatedTeacher}
-                onChange={(e) => setAllocatedTeacher(e.target.value)}
-              >
-                {teachers.map((teacher) => (
-                  <MenuItem key={teacher} value={teacher}>
-                    {teacher}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Button variant="contained" onClick={handleAllocateTeacher}>
-              Allocate Teacher
-            </Button>
-          </Box>
-        </Box>
+            <button
+              type="button"
+              style={styles.button}
+              onClick={handleAllocateStudentsToCounselor}
+              onMouseEnter={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
+              onMouseLeave={(e) => (e.target.style.backgroundColor = "#545eb5")}
+            >
+              Allocate Students
+            </button>
 
-        {/* Students List */}
-        <Box>
-          <Typography variant="h6">Students List</Typography>
-          <List>
-            {students.map((student, index) => (
-              <React.Fragment key={index}>
-                <ListItem>
-                  <ListItemText
-                    primary={`${student.name} (ID: ${student.id})`}
-                    secondary={`Class: ${student.className} | Teacher: ${
-                      student.teacher || "Not Allocated"
-                    }`}
-                  />
-                </ListItem>
-                <Divider />
-              </React.Fragment>
-            ))}
-          </List>
-        </Box>
+            {message && <Typography style={styles.message}>{message}</Typography>}
+          </form>
+        </div>
       </Box>
     </Box>
   );

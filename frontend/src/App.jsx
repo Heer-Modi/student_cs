@@ -30,7 +30,7 @@ import ComplaintForm from './components/ComplaintForm';
 import ComplaintView from './components/ComplaintView';
 import Notification from './components/Notification';
 import TeacherNotifications from './components/TeacherNotifications';
-import TeacherAttendance from './pages/teacher/TeacherAttendance';
+import YourStudents from './pages/teacher/YourStudents';
 import TeacherQueries from './pages/teacher/TeacherQueries';
 import ArrangeMeetingsPage from './pages/teacher/ArrangeMeetingsPage';
 import UploadDocumentsPage from './pages/teacher/UploadDocumentsPage';
@@ -60,7 +60,7 @@ function AppContent() {
     '/teacher/create-google-form',
     '/teacher/profile',
     '/teacher/notifications',
-    '/teacher/attendance',
+    '/teacher/yourstudents',
     '/teacher/queries'
   ];
 
@@ -113,7 +113,7 @@ function AppContent() {
         <Route path="/teacher/create-google-form" element={<CreateGoogleFormPage />} />
         <Route path="/teacher/profile" element={<TeacherProfile />} />
         <Route path="/teacher/notifications" element={<TeacherNotifications />} />
-        <Route path="/teacher/attendance" element={<TeacherAttendance />} />
+        <Route path="/teacher/yourstudents" element={<YourStudents />} />
         <Route path="/teacher/queries" element={<TeacherQueries />} />
 
         {/* Admin Routes */}

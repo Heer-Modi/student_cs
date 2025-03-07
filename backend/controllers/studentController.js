@@ -10,7 +10,7 @@ exports.saveStudentProfile = async (req, res) => {
       firstName,
       lastName,
       rollNumber, // ✅ Added Roll Number
-      Class,
+      department,
       parentsName,
       parentsPhone,
       address,
@@ -35,7 +35,7 @@ exports.saveStudentProfile = async (req, res) => {
         firstName,
         lastName,
         rollNumber, // ✅ Added Roll Number
-        Class,
+        department,
         parentsName,
         parentsPhone,
         address,

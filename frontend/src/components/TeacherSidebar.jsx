@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import SchoolIcon from "@mui/icons-material/School";
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 
 const TeacherSideBar = ({ open }) => {
@@ -35,13 +35,14 @@ const TeacherSideBar = ({ open }) => {
         <ListItemText primary="Notifications" sx={styles.text} />
       </ListItem>
 
-      {/* Attendance */}
-      <ListItem button component={Link} to="/teacher/attendance" sx={styles.listItem}>
+      {/* Your Students */}
+      <ListItem button component={Link} to="/teacher/yourstudents" sx={styles.listItem}>
         <ListItemIcon>
-          <CalendarTodayIcon sx={styles.icon} />
+          <SchoolIcon sx={styles.icon} /> {/* Updated to Student Icon */}
         </ListItemIcon>
-        <ListItemText primary="Attendance" sx={styles.text} />
+        <ListItemText primary="Your Students" sx={styles.text} />
       </ListItem>
+
 
       {/* View Queries */}
       <ListItem button component={Link} to="/teacher/queries" sx={styles.listItem}>
@@ -58,13 +59,13 @@ const TeacherSideBar = ({ open }) => {
 const styles = {
   drawerOpen: {
     backgroundColor: '#3f51b5', // Dark blue for sidebar
-    color: 'black', 
+    color: 'black',
     width: '240px',
     transition: 'width 0.3s ease', // Smooth transition
     paddingTop: '20px',
   },
   drawerClosed: {
-    backgroundColor: '#3f51b5', 
+    backgroundColor: '#3f51b5',
     color: 'black',
     width: '70px',
     transition: 'width 0.3s ease', // Smooth transition when closed

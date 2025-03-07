@@ -6,7 +6,7 @@ const AdminHome = () => {
   const [dashboardData, setDashboardData] = useState({
     studentsCount: 0,
     teachersCount: 0,
-    classesCount: 0,
+    
   });
 
   // Common styles for the component
@@ -84,18 +84,6 @@ const AdminHome = () => {
           </Typography>
           <Typography variant="h5" sx={styles.valueText}>
             {dashboardData.teachersCount}
-          </Typography>
-        </CardContent>
-      </Card>
-
-      {/* Total Classes */}
-      <Card sx={styles.card}>
-        <CardContent>
-          <Typography variant="h6" sx={styles.cardLabel}>
-            Total Classes
-          </Typography>
-          <Typography variant="h5" sx={styles.valueText}>
-            {dashboardData.classesCount}
           </Typography>
         </CardContent>
       </Card>

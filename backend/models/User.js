@@ -12,18 +12,30 @@ const userSchema = new mongoose.Schema({
     // Student-specific fields
     rollNumber: { type: String, default: null }, // Student ID No
     Class: { type: String, default: null }, // Student Class
+    counselor: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User", // References the teacher (counselor)
+    },
 
     // Additional fields
-    firstName: { type: String},
-    middleName: { type: String},
-    lastName: { type: String},
-    parentsName: { type: String},
-    parentsPhone: { type: String},
-    address: { type: String},
-    phone: { type: String},
-    photo: { type: String},
-    designation: { type: String},
-    department: { type: String},
+    firstName: { type: String },
+    middleName: { type: String },
+    lastName: { type: String },
+    parentsName: { type: String },
+    parentsPhone: { type: String },
+    address: { type: String },
+    phone: { type: String },
+    photo: { type: String },
+    designation: { type: String },
+    department: { type: String },
+
+    // Teacher-specific fields
+    counsellingStudents: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: "User", // List of assigned students
+        },
+    ],
 });
 
 // Check if the model already exists to avoid OverwriteModelError
