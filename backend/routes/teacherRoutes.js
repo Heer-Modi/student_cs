@@ -24,4 +24,6 @@ const { upload } = require('../middlewares/multermiddleware');
 router.post('/profile', upload.single('photo'), teacherController.saveTeacherProfile);
 router.get('/profile', verifyToken.verifyToken, teacherController.fetchTeacherProfile);
 
+router.get('/counseling-students', verifyToken.verifyToken, teacherController.fetchCounselingStudents);
+
 module.exports = router;

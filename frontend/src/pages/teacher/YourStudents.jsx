@@ -36,7 +36,7 @@ const YourStudents = () => {
     const fetchStudents = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("/api/teacher/students", {
+        const response = await axios.get("/api/teacher/counseling-students", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setStudents(response.data.students);
