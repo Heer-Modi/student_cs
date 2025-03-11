@@ -45,3 +45,25 @@ exports.allocateStudentsToCounselor = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+
+
+// ✅ Get Students Allocated to a Teacher
+exports.getCounselingStudents = async (req, res) => {
+  try {
+    const teacherId = req.user.id; // Get logged-in teacher's ID
+
+    // Find students assigned to this teacher
+    const students = await User.find({ counselor: teacherId }).select(
+      "name rollNumber Class email phone parentsName parentsPhone address photo"
+    );
+
+    if (!students || students.length === 0) {
+      return res.status(404).json({ message: "No students assigned to you." });
+    }
+
+    res.status(200).json({ students });
+  } catch (error) {
+    console.error("Error fetching allocated students:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

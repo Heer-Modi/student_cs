@@ -1,29 +1,20 @@
 // routes/teacherRoutes.js
-
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const teacherController = require('../controllers/teacherController');
-const multer = require('multer');
-const path = require('path');
-const verifyToken = require('../middlewares/verifyToken');
-const { upload } = require('../middlewares/multermiddleware');
-// Configure multer for photo uploads with filename preservation
-//const storage = multer.diskStorage({
-//  destination: (req, file, cb) => {
- //   cb(null, 'uploads/'); // Specify uploads directory
- // },
- // filename: (req, file, cb) => {
-//    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-//    cb(null, uniqueSuffix + path.extname(file.originalname)); // Preserve original file extension
-//  }
-//});
+const teacherController = require("../controllers/teacherController");
+const { verifyToken } = require("../middlewares/verifyToken"); // ✅ Fix here
+const { upload } = require("../middlewares/multermiddleware");
 
-//const upload = multer({ storage });
+// ✅ Route to save/update teacher profile
+router.post("/profile", upload.single("photo"), teacherController.saveTeacherProfile);
 
-// Route to save or update teacher profile with photo upload
-router.post('/profile', upload.single('photo'), teacherController.saveTeacherProfile);
-router.get('/profile', verifyToken.verifyToken, teacherController.fetchTeacherProfile);
+// ✅ Route to fetch teacher profile
+router.get("/profile", verifyToken, teacherController.fetchTeacherProfile);
 
-router.get('/counseling-students', verifyToken.verifyToken, teacherController.fetchCounselingStudents);
+// ✅ Route to fetch all counseling students assigned to a teacher
+router.get("/counseling-students", verifyToken, teacherController.fetchCounselingStudents);
+
+// ✅ New Route: Fetch an individual student's profile
+router.get("/student-profile/:rollNumber", verifyToken, teacherController.fetchStudentProfile);
 
 module.exports = router;

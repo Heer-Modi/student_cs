@@ -1,14 +1,12 @@
 // controllers/teacherController.js
-
 const path = require("path");
-const Teacher = require("../models/User"); // Reuse the User model as it includes the teacher fields
+const User = require("../models/User"); // ✅ Ensure only one import
 const uploadOnCloudinary = require("../utils/cloudinary");
 
 // Save or Update Teacher Profile
 exports.saveTeacherProfile = async (req, res) => {
   try {
-    const { _id, name, designation, phone, email, address, department } =
-      req.body;
+    const { _id, name, designation, phone, email, address, department } = req.body;
 
     // Handle photo file if provided
     let photoPath;
@@ -22,7 +20,7 @@ exports.saveTeacherProfile = async (req, res) => {
     }
 
     // Update or create new teacher profile
-    const teacher = await Teacher.findOneAndUpdate(
+    const teacher = await User.findOneAndUpdate(
       { _id: _id, role: "teacher" }, // Ensure only teacher profiles are updated
       {
         name,
@@ -36,9 +34,7 @@ exports.saveTeacherProfile = async (req, res) => {
       { new: true, upsert: true }
     );
 
-    res
-      .status(200)
-      .json({ message: "Teacher profile saved successfully", teacher });
+    res.status(200).json({ message: "Teacher profile saved successfully", teacher });
   } catch (error) {
     console.error("Error saving teacher profile:", error);
     res.status(500).json({ message: "Error saving teacher profile" });
@@ -48,7 +44,7 @@ exports.saveTeacherProfile = async (req, res) => {
 // Fetch Teacher Profile
 exports.fetchTeacherProfile = async (req, res) => {
   try {
-    const teacher = await Teacher.findOne({
+    const teacher = await User.findOne({
       _id: req.user.id,
       role: "teacher",
     });
@@ -59,5 +55,46 @@ exports.fetchTeacherProfile = async (req, res) => {
   } catch (error) {
     console.error("Error fetching teacher profile:", error);
     res.status(500).json({ message: "Error fetching teacher profile" });
+  }
+};
+
+// ✅ Fetch all counseling students assigned to a teacher
+exports.fetchCounselingStudents = async (req, res) => {
+  try {
+    const teacherId = req.user.id; // Get logged-in teacher's ID
+
+    // 🔹 Find students assigned to this teacher
+    const students = await User.find({ counselor: teacherId, role: "student" }).select(
+      "name rollNumber Class email phone parentsName parentsPhone address photo"
+    );
+
+    if (!students.length) {
+      return res.status(404).json({ message: "No students assigned to you." });
+    }
+
+    res.status(200).json({ students });
+  } catch (error) {
+    console.error("Error fetching counseling students:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+// ✅ Fetch individual student profile
+exports.fetchStudentProfile = async (req, res) => {
+  try {
+    const { rollNumber } = req.params; // Student ID from URL
+    const teacherId = req.user.id; // Get the logged-in teacher's ID
+
+    const student = await User.findOne({ rollNumber, counselor: teacherId }).select(
+      "name rollNumber Class email phone parentsName parentsPhone address photo"
+    );
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found or not assigned to you." });
+    }
+
+    res.status(200).json({ student });
+  } catch (error) {
+    console.error("Error fetching student profile:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
