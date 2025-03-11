@@ -39,9 +39,13 @@ const YourStudents = () => {
         const response = await axios.get("/api/teachers/counseling-students", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setStudents(response.data.students);
+        
+        if (response.status === 200) {
+          setStudents(response.data.students);
+        }
       } catch (error) {
-        console.error("Error fetching students:", error);
+        console.log("Error fetching students:", error);
+        setStudents([])
       }
     };
     fetchStudents();
@@ -61,6 +65,8 @@ const YourStudents = () => {
       student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       student.rollNumber.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  console.log(students);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -93,7 +99,7 @@ const YourStudents = () => {
 
           {/* Student List */}
           <List sx={{ width: "100%" }}>
-            {filteredStudents.length > 0 ? (
+            {(students && students.length > 0 && filteredStudents.length && filteredStudents.length > 0) ? (
               filteredStudents.map((student, index) => (
                 <ListItem key={index} disableGutters sx={styles.listItem}>
                   <Avatar src={student.photo} sx={styles.avatar} />
@@ -135,7 +141,9 @@ const YourStudents = () => {
                 </ListItem>
               ))
             ) : (
-              <Typography>No students found.</Typography>
+              <div>
+                <Typography>No students found.</Typography>
+              </div>
             )}
           </List>
 

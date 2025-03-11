@@ -69,7 +69,7 @@ exports.fetchCounselingStudents = async (req, res) => {
     );
 
     if (!students.length) {
-      return res.status(404).json({ message: "No students assigned to you." });
+      return res.status(204).json({ message: "No students assigned to you." });
     }
 
     res.status(200).json({ students });
