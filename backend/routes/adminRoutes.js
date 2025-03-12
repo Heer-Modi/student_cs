@@ -3,6 +3,7 @@ const router = express.Router();
 const adminController = require('../controllers/adminController');
 const { verifyToken, restrictToRole } = require('../middlewares/verifyToken');
 const { upload } = require('../middlewares/multermiddleware');
+const { allocateStudentsToCounselor } = require('../controllers/userManagementController');
 
 // Admin Login
 //router.post('/login', adminController.loginAdmin);
@@ -21,5 +22,7 @@ router.get('/profile', verifyToken, restrictToRole('admin'), adminController.fet
 
 // Save Admin Profile
 router.post('/profile', upload.single('photo'), adminController.saveAdminProfile);
+
+router.post("/allocate-students", allocateStudentsToCounselor);
 
 module.exports = router;

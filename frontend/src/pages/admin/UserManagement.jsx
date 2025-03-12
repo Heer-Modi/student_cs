@@ -35,7 +35,7 @@ const UserManagement = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/user-management/allocate-students",
+        "http://localhost:5000/api/admin/allocate-students",
         { studentIdFrom, studentIdTo, teacherEmail }
       );
 
