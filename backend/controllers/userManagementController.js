@@ -99,7 +99,7 @@ exports.getCounselingStudents = async (req, res) => {
 
     // Find students assigned to this teacher
     const students = await User.find({ counselor: teacherId }).select(
-      "name rollNumber Class email phone parentsName parentsPhone address photo"
+      "name rollNumber department email phone parentsName parentsPhone address photo"
     );
 
     if (!students || students.length === 0) {

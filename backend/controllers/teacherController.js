@@ -65,7 +65,7 @@ exports.fetchCounselingStudents = async (req, res) => {
 
     // 🔹 Find students assigned to this teacher
     const students = await User.find({ counselor: teacherId, role: "student" }).select(
-      "name rollNumber Class email phone parentsName parentsPhone address photo"
+      "name rollNumber department email phone parentsName parentsPhone address photo"
     );
 
     if (!students.length) {
@@ -85,7 +85,7 @@ exports.fetchStudentProfile = async (req, res) => {
     const teacherId = req.user.id; // Get the logged-in teacher's ID
 
     const student = await User.findOne({ rollNumber, counselor: teacherId }).select(
-      "name rollNumber Class email phone parentsName parentsPhone address photo"
+      "name rollNumber department email phone parentsName parentsPhone address photo"
     );
 
     if (!student) {

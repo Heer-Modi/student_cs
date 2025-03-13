@@ -111,7 +111,7 @@ const YourStudents = () => {
                     <Avatar src={student.photo} sx={styles.avatar} />
                     <ListItemText
                       primary={student.name}
-                      secondary={`ID: ${student.rollNumber} | Class: ${student.Class}`}
+                      secondary={`ID: ${student.rollNumber} |  Department: ${student.department}`}
                       sx={styles.listText}
                     />
                     <IconButton onClick={() => toggleDetails(student.rollNumber)}>
