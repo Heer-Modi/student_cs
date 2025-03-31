@@ -16,6 +16,12 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: "User", // References the teacher (counselor)
     },
+    notifications: [
+        {
+          message: String,
+          createdAt: { type: Date, default: Date.now },
+        },
+      ],
 
     // Additional fields
     firstName: { type: String },

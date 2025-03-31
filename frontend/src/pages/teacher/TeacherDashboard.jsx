@@ -9,6 +9,7 @@ import Footer from '../../components/Footer';
 import TeacherHome from './TeacherHome';
 import TeacherProfile from './TeacherProfile';
 import ArrangeMeetingsPage from './ArrangeMeetingsPage';
+import MeetingAttendancePage from './MeetingAttendancePage';
 import UploadDocumentsPage from './UploadDocumentsPage';
 import CreateGoogleFormPage from './CreateGoogleFormPage';
 import TeacherSideBar from '../../components/TeacherSidebar';
@@ -49,6 +50,7 @@ const TeacherDashboard = () => {
                 <Route path="/" element={<TeacherHome />} />
                 <Route path="/profile" element={<TeacherProfile />} />
                 <Route path="/arrange-meeting" element={<ArrangeMeetingsPage />} />
+                <Route path="/meeting-attendance" element={<MeetingAttendancePage />} />
                 <Route path="/upload-documents" element={<UploadDocumentsPage />} />
                 <Route path="/create-google-form" element={<CreateGoogleFormPage />} />
                 <Route path="*" element={<Navigate to="/" />} />

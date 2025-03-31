@@ -33,6 +33,7 @@ import TeacherNotifications from './components/TeacherNotifications';
 import YourStudents from './pages/teacher/YourStudents';
 import TeacherQueries from './pages/teacher/TeacherQueries';
 import ArrangeMeetingsPage from './pages/teacher/ArrangeMeetingsPage';
+import MeetingAttendancePage from './pages/teacher/MeetingAttendancePage';
 import UploadDocumentsPage from './pages/teacher/UploadDocumentsPage';
 import CreateGoogleFormPage from './pages/teacher/CreateGoogleFormPage';
 import Logout from './pages/auth/Logout';
@@ -56,6 +57,7 @@ function AppContent() {
   const teacherRoutes = [
     '/teacher/dashboard',
     '/teacher/arrange-meetings',
+    '/teacher/metting-attendance',
     '/teacher/upload-documents',
     '/teacher/create-google-form',
     '/teacher/profile',
@@ -109,6 +111,7 @@ function AppContent() {
         {/* Teacher Routes */}
         <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
         <Route path="/teacher/arrange-meetings" element={<ArrangeMeetingsPage />} />
+        <Route path="/teacher/meeting-attendance" element={<MeetingAttendancePage />} />
         <Route path="/teacher/upload-documents" element={<UploadDocumentsPage />} />
         <Route path="/teacher/create-google-form" element={<CreateGoogleFormPage />} />
         <Route path="/teacher/profile" element={<TeacherProfile />} />

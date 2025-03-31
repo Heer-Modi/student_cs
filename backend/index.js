@@ -14,6 +14,7 @@ const dashboardRoutes = require('./routes/dashboardRoutes'); // Importing the ne
 const noticeRoutes = require("./routes/noticeRoutes");
 
 
+
 // Initialize app
 const app = express();
 app.use(express.json());
@@ -35,6 +36,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/dashboard', dashboardRoutes); // Adding the dashboard routes
 app.use('/api/complaints', complaintRoutes); // Route prefix for complaints
 app.use("/api/notices", noticeRoutes);
+
 
 
 // Start server
