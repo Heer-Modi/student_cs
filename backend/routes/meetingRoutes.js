@@ -1,17 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const meetingController = require("../controllers/meetingController");
-const { verifyToken, isTeacher, isStudent } = require("../middlewares/authMiddleware");
+const { isTeacher, isStudent } = require("../middlewares/authMiddleware");
+const { verifyToken } = require("../middlewares/verifyToken");
 
 // ✅ Create Meeting & Notify Allocated Students
-router.post("/", verifyToken, isTeacher, meetingController.createMeeting);
+router.post("/create-meeting", verifyToken, meetingController.createMeeting);
 
 // ✅ Fetch Notifications for a Student Dashboard
-router.get("/notifications", verifyToken, isStudent, meetingController.getStudentNotifications);
+router.get("/notifications", verifyToken, meetingController.getStudentNotifications);
 
 
 // ✅ Get Meeting & Student List
-router.get("/:meetingId", verifyToken, isTeacher, meetingController.getMeetingDetails);
+router.get("/:meetingId", verifyToken, meetingController.getMeetingDetails);
 
 // ✅ Save Attendance
 router.post("/attendance", verifyToken, isTeacher, meetingController.saveAttendance);

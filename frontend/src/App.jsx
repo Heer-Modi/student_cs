@@ -108,18 +108,19 @@ function AppContent() {
         <Route path="/student/profile" element={<StudentProfile refreshProfilePhoto={refreshProfilePhoto} />} />
         <Route path="/student/dashboard" element={<StudentDashboard />} />
 
-        {/* Teacher Routes */}
-        <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
-        <Route path="/teacher/arrange-meetings" element={<ArrangeMeetingsPage />} />
-        <Route path="/teacher/meeting-attendance" element={<MeetingAttendancePage />} />
-        <Route path="/teacher/upload-documents" element={<UploadDocumentsPage />} />
-        <Route path="/teacher/create-google-form" element={<CreateGoogleFormPage />} />
-        <Route path="/teacher/profile" element={<TeacherProfile />} />
-        <Route path="/teacher/notifications" element={<TeacherNotifications />} />
-        <Route path="/teacher/yourstudents" element={<YourStudents />} />
-        <Route path="/teacher/queries" element={<TeacherQueries />} />
+        /* Teacher Routes */
+          <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+          <Route path="/teacher/arrange-meetings" element={<ArrangeMeetingsPage />} />
+          <Route path="/teacher/meeting-attendance" element={<MeetingAttendancePage />} />
+          <Route path="/teacher/meeting-attendance/:meetingId" element={<MeetingAttendancePage />} />
+          <Route path="/teacher/upload-documents" element={<UploadDocumentsPage />} />
+          <Route path="/teacher/create-google-form" element={<CreateGoogleFormPage />} />
+          <Route path="/teacher/profile" element={<TeacherProfile />} />
+          <Route path="/teacher/notifications" element={<TeacherNotifications />} />
+          <Route path="/teacher/yourstudents" element={<YourStudents />} />
+          <Route path="/teacher/queries" element={<TeacherQueries />} />
 
-        {/* Admin Routes */}
+          {/* Admin Routes */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/user-management" element={<UserManagement />} />
         <Route path="/admin/complaints-management" element={<ComplaintsManagement />} />

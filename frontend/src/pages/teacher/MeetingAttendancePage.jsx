@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, CssBaseline, Toolbar, Drawer, IconButton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  CssBaseline,
+  Toolbar,
+  Drawer,
+  IconButton,
+} from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import TeacherSideBar from "../../components/TeacherSidebar";
@@ -14,7 +22,12 @@ const MeetingAttendancePage = () => {
   const [meeting, setMeeting] = useState(null);
 
   useEffect(() => {
-    axios.get(`/api/meetings/${meetingId}`).then((res) => setMeeting(res.data));
+    const token = localStorage.getItem("token");
+    axios
+      .get(`/api/meetings/${meetingId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setMeeting(res.data));
   }, [meetingId]);
 
   const toggleDrawer = () => setOpen(!open);
@@ -42,9 +55,16 @@ const MeetingAttendancePage = () => {
           </Typography>
           {meeting && (
             <>
-              <Typography>Date: {meeting.date} | Time: {meeting.time}</Typography>
+              <Typography>
+                Date: {meeting.date} | Time: {meeting.time}
+              </Typography>
               <Typography>Agenda: {meeting.agenda}</Typography>
-              <Button variant="contained" sx={styles.button} href={`/api/meetings/download/${meetingId}`} download>
+              <Button
+                variant="contained"
+                sx={styles.button}
+                href={`/api/meetings/download/${meetingId}`}
+                download
+              >
                 Download Attendance Excel
               </Button>
             </>

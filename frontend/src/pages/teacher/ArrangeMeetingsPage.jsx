@@ -22,11 +22,13 @@ const ArrangeMeetingsPage = () => {
   const handleArrangeMeeting = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post("/api/meetings", { date, time, agenda }, {
+      const response = await axios.post("/api/meetings/create-meeting", { date, time, agenda }, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      navigate(`/teacher/meeting-attendance/${response.data.meetingId}`);
+      // navigate(`/teacher/meeting-attendance/${response.data.meetingId}`);
+      console.log("Meeting arranged successfully:", response.data);
+      
       setNotificationOpen(true);
     } catch (error) {
       console.error("Error scheduling meeting:", error);
