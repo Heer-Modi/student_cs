@@ -30,8 +30,15 @@ exports.checkRole = (roles) => (req, res, next) => {
 };
 
 exports.isTeacher = (req, res, next) => {
-  if (req.user.role !== "teacher") {
+  if (req.user?.role !== "teacher") {
     return res.status(403).json({ message: "Access denied. Teachers only." });
+  }
+  next();
+};
+
+exports.isStudent = (req, res, next) => {
+  if (req.user?.role !== "student") {
+    return res.status(403).json({ message: "Access denied. Students only." });
   }
   next();
 };
