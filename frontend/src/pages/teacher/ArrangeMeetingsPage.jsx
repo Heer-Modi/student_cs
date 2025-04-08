@@ -26,7 +26,7 @@ const ArrangeMeetingsPage = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // navigate(`/teacher/meeting-attendance/${response.data.meetingId}`);
+       navigate(`/teacher/meeting-attendance/${response.data.meetingId}`);
       console.log("Meeting arranged successfully:", response.data);
       
       setNotificationOpen(true);

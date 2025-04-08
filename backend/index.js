@@ -13,6 +13,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes'); // Importing the new dashboard routes
 const noticeRoutes = require("./routes/noticeRoutes");
 const meetingRoutes = require("./routes/meetingRoutes");
+const documentRoutes = require('./routes/documentRoutes');
 
 
 
@@ -38,7 +39,7 @@ app.use('/dashboard', dashboardRoutes); // Adding the dashboard routes
 app.use('/api/complaints', complaintRoutes); // Route prefix for complaints
 app.use("/api/notices", noticeRoutes);
 app.use('/api/meetings', meetingRoutes);
-
+app.use('/api/documents', documentRoutes);
 
 
 // Start server

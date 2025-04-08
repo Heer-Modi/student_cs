@@ -1,14 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Card, CardContent, Typography, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import axios from 'axios';
 
 const ViewMeetings = () => {
-  const initialMeetings = [
-    { id: 1, date: '2024-09-20', subject: 'Counseling Session with Dr. Smith' },
-    { id: 2, date: '2024-09-25', subject: 'Career Guidance with Prof. Brown' },
-  ];
+  const [meetings, setMeetings] = useState([]);
 
-  const [meetings, setMeetings] = useState(initialMeetings);
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("/api/meetings/notifications", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const formatted = res.data.notifications.map((n, idx) => {
+          // Combine date and time into one Date object
+          const combinedDateTime = new Date(`${n.date}T${n.time}`);
+          return {
+            id: idx + 1,
+            date: combinedDateTime.toLocaleDateString(),
+            time: combinedDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            subject: `Agenda: ${n.agenda}`,
+          };
+        });
+
+
+        setMeetings(formatted);
+      } catch (error) {
+        console.error("Error fetching meeting notifications:", error);
+      }
+    };
+    fetchNotifications();
+  }, []);
+
+
 
   const handleClose = (id, date) => {
     const today = new Date();
@@ -34,10 +59,10 @@ const ViewMeetings = () => {
           <CardContent>
             <Typography variant="h6">{meeting.subject}</Typography>
             <Typography variant="body2">{meeting.date}</Typography>
+            <Typography variant="body2">Time: {meeting.time}</Typography>
+
           </CardContent>
-          <IconButton onClick={() => handleClose(meeting.id, meeting.date)}>
-            <CloseIcon sx={{ color: '#10184b' }} />
-          </IconButton>
+
         </Card>
       ))}
     </Box>

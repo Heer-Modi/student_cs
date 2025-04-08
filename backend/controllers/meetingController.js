@@ -67,8 +67,15 @@ exports.getStudentNotifications = async (req, res) => {
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
+    // Optional: Enhance notification structure by parsing date, time, etc.
+    const formattedNotifications = student.notifications.map((n) => {
+      const match = n.message.match(/New Meeting Scheduled: (.+) at (.+)\. Agenda: (.+)/);
+      return match
+        ? { date: match[1], time: match[2], agenda: match[3] }
+        : { message: n.message };
+    });
 
-    res.status(200).json({ notifications: student.notifications });
+    res.status(200).json({ notifications: formattedNotifications });
   } catch (error) {
     console.error("Error fetching notifications:", error);
     res.status(500).json({ message: "Server error" });
