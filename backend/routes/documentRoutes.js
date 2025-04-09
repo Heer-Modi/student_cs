@@ -1,15 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-const { uploadDocument, getStudentDocuments } = require('../controllers/documentController');
+const { uploadDocument, getStudentDocuments, downloadDocument } = require('../controllers/documentController');
 const { verifyToken } = require('../middlewares/verifyToken');
-const { isTeacher, isStudent } = require('../middlewares/authMiddleware');
+const { protect, isStudent, isTeacher } = require('../middlewares/authMiddleware');
 const { upload } = require('../middlewares/multermiddleware');
 
-// Route to upload a document (Teachers only)
-router.post('/upload', verifyToken, isTeacher, upload.single('document'), uploadDocument);
-
-// Route to get documents (Students only)
-router.get('/my-documents', verifyToken, isStudent, getStudentDocuments);
+router.post('/upload', protect, isTeacher, upload.single('document'), uploadDocument);
+router.get('/my-documents', protect, isStudent, getStudentDocuments);
+router.get('/download/:id', protect, isStudent, downloadDocument);
 
 module.exports = router;

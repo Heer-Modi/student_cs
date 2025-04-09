@@ -1,48 +1,68 @@
 import React, { useState } from 'react';
-import { Box, TextField, CssBaseline, Toolbar, Drawer, Snackbar, Alert, Typography, IconButton, Button } from '@mui/material';
+import {
+  Box,
+  TextField,
+  CssBaseline,
+  Toolbar,
+  Drawer,
+  Snackbar,
+  Alert,
+  Typography,
+  IconButton,
+  Button,
+} from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TeacherSideBar from '../../components/TeacherSidebar';
+import axios from 'axios';
 
 const drawerWidth = 240;
 
 const UploadDocumentsPage = () => {
-  const [open, setOpen] = useState(true); // Sidebar toggle state
-  const [email, setEmail] = useState('');
-  const [files, setFiles] = useState([]); // Array to hold multiple files
+  const [open, setOpen] = useState(true);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [file, setFile] = useState(null);
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const [error, setError] = useState('');
 
-  const toggleDrawer = () => setOpen(!open); // Function to toggle the sidebar open/close
+  const toggleDrawer = () => setOpen(!open);
   const handleCloseNotification = () => setNotificationOpen(false);
 
-  // Handle multiple files
   const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files); // Convert to array for multiple files
-    setFiles(selectedFiles);
+    setFile(e.target.files[0]);
   };
 
-  // Email validation function
-  const isEmailValid = (email) => {
-    return email.endsWith('.edu.in');
-  };
-
-  // Upload function (only uploads files locally)
-  const handleUploadDocument = () => {
-    if (!email || !isEmailValid(email) || files.length === 0) {
+  const handleSendDocument = async () => {
+    setError('');
+    if (!title || !description || !file) {
+      setError('All fields are required');
       return;
     }
-    console.log(`Files uploaded for ${email}:`, files);
-  };
 
-  // Send function (logs document info, clears fields, and shows notification)
-  const handleSendDocument = () => {
-    if (!email || !isEmailValid(email) || files.length === 0) {
-      return;
+    const formData = new FormData();
+    formData.append('document', file);
+    formData.append('title', title);
+    formData.append('description', description);
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post('/api/documents/upload', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log('Upload success:', response.data);
+      setTitle('');
+      setDescription('');
+      setFile(null);
+      setNotificationOpen(true);
+    } catch (err) {
+      console.error('Upload error:', err);
+      setError('Failed to upload document');
     }
-    console.log(`Document sent to ${email}`, files);
-    setEmail('');
-    setFiles([]);
-    setNotificationOpen(true);
   };
 
   const styles = {
@@ -84,15 +104,16 @@ const UploadDocumentsPage = () => {
         backgroundColor: '#3d4a9b',
       },
     },
-    uploadButton: {
-      marginRight: '10px',
-    },
     heading: {
       color: '#545eb5',
       marginBottom: '20px',
       fontSize: '24px',
       fontWeight: '600',
       textAlign: 'center',
+    },
+    errorText: {
+      color: 'red',
+      marginBottom: '10px',
     },
   };
 
@@ -110,56 +131,58 @@ const UploadDocumentsPage = () => {
         <TeacherSideBar open={open} />
       </Drawer>
 
-      {/* Main content for Upload Documents Form */}
+      {/* Main content */}
       <Box component="main" sx={styles.mainContent}>
         <Toolbar />
         <div style={styles.container}>
           <Typography variant="h4" style={styles.heading}>
-            Upload Documents
+            Upload Document
           </Typography>
+
           <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+            {error && <Typography sx={styles.errorText}>{error}</Typography>}
+
             <TextField
-              label="Student's Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              label="Document Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               fullWidth
               sx={{ marginBottom: 2 }}
-              required
-              error={!isEmailValid(email)}
-              helperText={!isEmailValid(email) ? 'Email must end with .edu.in' : ''}
+            />
+
+            <TextField
+              label="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              fullWidth
+              sx={{ marginBottom: 2 }}
             />
 
             <Button
               variant="contained"
               component="label"
-              sx={{ ...styles.button, ...styles.uploadButton }}
+              sx={styles.button}
             >
-              Upload Documents
-              <input type="file" hidden multiple onChange={handleFileChange} />
+              Upload File
+              <input type="file" hidden onChange={handleFileChange} />
             </Button>
+
+            {file && (
+              <Typography sx={{ mt: 2 }}>{file.name}</Typography>
+            )}
 
             <Button
               variant="contained"
               onClick={handleSendDocument}
               sx={styles.button}
-              disabled={!email || !isEmailValid(email) || files.length === 0}
+              disabled={!title || !description || !file}
             >
               Send Document
             </Button>
-
-            {files.length > 0 && (
-              <Box sx={{ mt: 2 }}>
-                <Typography variant="subtitle1">Files to be sent:</Typography>
-                {files.map((file, index) => (
-                  <Typography key={index} variant="body2">{file.name}</Typography>
-                ))}
-              </Box>
-            )}
           </form>
         </div>
       </Box>
 
-      {/* Snackbar for success message */}
       <Snackbar
         open={notificationOpen}
         autoHideDuration={4000}
@@ -167,7 +190,7 @@ const UploadDocumentsPage = () => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
         <Alert onClose={handleCloseNotification} severity="success">
-          Document uploaded and sent successfully!
+          Document uploaded and sent to students!
         </Alert>
       </Snackbar>
     </Box>
