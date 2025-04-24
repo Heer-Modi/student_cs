@@ -7,162 +7,413 @@ const StudentLogin = () => {
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const navigate = useNavigate(); // For redirection after login
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
             const response = await axios.post('/api/users/login/student', {
-                email, password, role: 'student' // Specify role as student
+                email, password, role: 'student'
             });
 
             const { token } = response.data;
-
-            // Save JWT token in localStorage
             localStorage.setItem('token', token);
-
             setMessage(response.data.message);
-
-            // Redirect to student dashboard
             setTimeout(() => navigate('/student/dashboard'), 2000);
         } catch (error) {
             setError(error.response ? error.response.data.message : 'Login failed');
+        } finally {
+            setLoading(false);
         }
     };
 
-    // Inline CSS styles
-    const containerStyle = {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        backgroundColor: '#e8f0fe',
+    // Modern UI Styles
+    const styles = {
+        pageContainer: {
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '100vh',
+            backgroundColor: '#f5f7fa',
+            backgroundImage: 'radial-gradient(circle at 25% 25%, rgba(66, 153, 225, 0.1) 0%, transparent 45%), radial-gradient(circle at 75% 75%, rgba(237, 100, 166, 0.1) 0%, transparent 45%)',
+            padding: '20px',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+        },
+        cardContainer: {
+            display: 'flex',
+            width: '90%',
+            maxWidth: '1000px',
+            minHeight: '600px',
+            backgroundColor: 'white',
+            borderRadius: '16px',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
+            overflow: 'hidden'
+        },
+        leftPanel: {
+            flex: '1',
+            background: 'linear-gradient(135deg, #38bdf8 0%, #0c4a6e 100%)',
+            color: 'white',
+            padding: '40px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            position: 'relative',
+            overflow: 'hidden'
+        },
+        brandLogo: {
+            fontSize: '28px',
+            fontWeight: '700',
+            marginBottom: '40px',
+            position: 'relative'
+        },
+        studentIcon: {
+            position: 'absolute',
+            bottom: '-80px',
+            right: '-80px',
+            width: '300px',
+            height: '300px',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '50%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+        },
+        welcomeTitle: {
+            fontSize: '32px',
+            fontWeight: '700',
+            marginBottom: '16px',
+            position: 'relative'
+        },
+        welcomeText: {
+            fontSize: '16px',
+            lineHeight: '1.6',
+            marginBottom: '30px',
+            opacity: '0.9',
+            maxWidth: '400px',
+            position: 'relative'
+        },
+        features: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+            position: 'relative'
+        },
+        featureItem: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            fontSize: '15px'
+        },
+        featureIcon: {
+            width: '24px',
+            height: '24px',
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+            borderRadius: '50%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            fontSize: '14px'
+        },
+        rightPanel: {
+            flex: '1',
+            padding: '40px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center'
+        },
+        formContainer: {
+            maxWidth: '400px',
+            margin: '0 auto',
+            width: '100%'
+        },
+        loginHeader: {
+            textAlign: 'center',
+            marginBottom: '30px'
+        },
+        loginTitle: {
+            fontSize: '28px',
+            fontWeight: '700',
+            color: '#1a365d',
+            marginBottom: '8px'
+        },
+        loginSubtitle: {
+            fontSize: '15px',
+            color: '#718096',
+            margin: '0'
+        },
+        errorMessage: {
+            backgroundColor: '#FEE2E2',
+            color: '#B91C1C',
+            padding: '12px 16px',
+            borderRadius: '8px',
+            marginBottom: '20px',
+            fontSize: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+        },
+        successMessage: {
+            backgroundColor: '#DCFCE7',
+            color: '#166534',
+            padding: '12px 16px',
+            borderRadius: '8px',
+            marginBottom: '20px',
+            fontSize: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+        },
+        form: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px'
+        },
+        inputGroup: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px'
+        },
+        inputLabel: {
+            fontSize: '14px',
+            fontWeight: '500',
+            color: '#4A5568'
+        },
+        input: {
+            padding: '12px 16px',
+            borderRadius: '8px',
+            border: '1.5px solid #E2E8F0',
+            fontSize: '15px',
+            transition: 'all 0.3s ease',
+            outline: 'none'
+        },
+        inputFocus: {
+            borderColor: '#3182CE',
+            boxShadow: '0 0 0 3px rgba(66, 153, 225, 0.15)'
+        },
+        emailHint: {
+            fontSize: '12px',
+            color: '#718096',
+            marginTop: '4px'
+        },
+        forgotPassword: {
+            fontSize: '14px',
+            color: '#3182CE',
+            textAlign: 'right',
+            textDecoration: 'none',
+            marginTop: '8px',
+            display: 'inline-block',
+            cursor: 'pointer'
+        },
+        loginButton: {
+            padding: '14px',
+            backgroundColor: '#3182CE',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '8px'
+        },
+        loginButtonHover: {
+            backgroundColor: '#2B6CB0',
+            transform: 'translateY(-2px)',
+            boxShadow: '0 4px 12px rgba(66, 153, 225, 0.3)'
+        },
+        spinner: {
+            width: '20px',
+            height: '20px',
+            borderRadius: '50%',
+            border: '3px solid rgba(255, 255, 255, 0.3)',
+            borderTopColor: 'white',
+            animation: 'spin 0.8s linear infinite'
+        },
+        footer: {
+            textAlign: 'center',
+            marginTop: '30px'
+        },
+        footerText: {
+            fontSize: '14px',
+            color: '#718096',
+            margin: '8px 0'
+        },
+        footerLink: {
+            color: '#3182CE',
+            fontWeight: '600',
+            textDecoration: 'none',
+            cursor: 'pointer'
+        },
+        roleLink: {
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            fontSize: '14px',
+            color: '#718096',
+            cursor: 'pointer',
+            marginTop: '20px'
+        },
+        '@keyframes spin': {
+            '0%': { transform: 'rotate(0deg)' },
+            '100%': { transform: 'rotate(360deg)' }
+        }
     };
 
-    const loginCardStyle = {
-        display: 'flex',
-        backgroundColor: 'white',
-        borderRadius: '10px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        overflow: 'hidden',
-        width: '60%',
-        maxWidth: '900px',
-    };
-
-    const leftSectionStyle = {
-        flex: 1,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#f8f9fa',
-        padding: '20px',
-    };
-
-    const rightSectionStyle = {
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        padding: '40px',
-    };
-
-    const headerStyle = {
-        textAlign: 'center',
-        marginBottom: '20px',
-        fontSize: '24px',
-        fontWeight: '600',
-        color: '#4a4a4a',
-    };
-
-    const formStyle = {
-        display: 'flex',
-        flexDirection: 'column',
-    };
-
-    const inputStyle = {
-        marginBottom: '20px',
-        padding: '10px',
-        borderRadius: '5px',
-        border: '1px solid #ced4da',
-        fontSize: '16px',
-    };
-
-    const buttonStyle = {
-        padding: '10px',
-        backgroundColor: '#007bff',
-        color: 'white',
-        border: 'none',
-        borderRadius: '5px',
-        fontSize: '16px',
-        cursor: 'pointer',
-        transition: 'background-color 0.3s ease',
-        marginBottom: '20px',
-    };
-
-    const buttonHoverStyle = {
-        backgroundColor: '#0056b3',
-    };
-
-    const linkStyle = {
-        textAlign: 'center',
-        color: '#007bff',
-        fontSize: '14px',
-        cursor: 'pointer',
-    };
+    // Additional inline styles for focus states
+    const [emailFocused, setEmailFocused] = useState(false);
+    const [passwordFocused, setPasswordFocused] = useState(false);
 
     return (
-        <div style={containerStyle}>
-            <div style={loginCardStyle}>
-                {/* Left section with illustration */}
-                <div style={leftSectionStyle}>
-                    <img
-                        src="https://static.vecteezy.com/system/resources/previews/001/991/652/original/sign-in-page-flat-design-concept-illustration-icon-account-login-user-login-abstract-metaphor-can-use-for-landing-page-mobile-app-ui-posters-banners-free-vector.jpg" 
-                        alt="Login Illustration"
-                        style={{ width: '80%', height: 'auto' }}
-                    />
+        <div style={styles.pageContainer}>
+            <div style={styles.cardContainer}>
+                {/* Left Panel */}
+                <div style={styles.leftPanel}>
+                    <h1 style={styles.brandLogo}>EduPortal</h1>
+                    
+                    <h2 style={styles.welcomeTitle}>Welcome Back, Student!</h2>
+                    <p style={styles.welcomeText}>
+                        Access your courses, assignments, and educational resources all in one place.
+                    </p>
+                    
+                    <div style={styles.features}>
+                        <div style={styles.featureItem}>
+                            <div style={styles.featureIcon}>✓</div>
+                            <span>Access to all courses</span>
+                        </div>
+                        <div style={styles.featureItem}>
+                            <div style={styles.featureIcon}>✓</div>
+                            <span>Track your academic progress</span>
+                        </div>
+                        <div style={styles.featureItem}>
+                            <div style={styles.featureIcon}>✓</div>
+                            <span>Submit assignments online</span>
+                        </div>
+                    </div>
+                    
+                    <div style={styles.studentIcon}></div>
                 </div>
-
-                {/* Right section with form */}
-                <div style={rightSectionStyle}>
-                <h2 style={headerStyle}>Student Login</h2>
-                    <form onSubmit={handleSubmit} style={formStyle}>
-                        <input
-                            type="email"
-                            placeholder="Enter your username/email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            style={inputStyle}
-                        />
-                        <input
-                            type="password"
-                            placeholder="Enter your password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            style={inputStyle}
-                        />
-                        <button
-                            type="submit"
-                            style={buttonStyle}
-                            onMouseEnter={(e) => (e.target.style.backgroundColor = buttonHoverStyle.backgroundColor)}
-                            onMouseLeave={(e) => (e.target.style.backgroundColor = '#007bff')}
-                        >
-                            Login
-                        </button>
-                        {message && <p style={{ color: 'green' }}>{message}</p>}
-                        {error && <p style={{ color: 'red' }}>{error}</p>}
-                    </form>
-                    <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                        <p
-                            style={linkStyle}
-                            onClick={() => navigate('/reset-password')}
-                        >
-                            Forgot Password?
-                        </p>
-                        <p style={linkStyle} onClick={() => navigate('/')}>
-                            Don't have an account? <b>Signup now</b>
-                        </p>
+                
+                {/* Right Panel */}
+                <div style={styles.rightPanel}>
+                    <div style={styles.formContainer}>
+                        <div style={styles.loginHeader}>
+                            <h2 style={styles.loginTitle}>Student Login</h2>
+                            <p style={styles.loginSubtitle}>Enter your credentials to continue</p>
+                        </div>
+                        
+                        {error && (
+                            <div style={styles.errorMessage}>
+                                <span>⚠️</span>
+                                <span>{error}</span>
+                            </div>
+                        )}
+                        
+                        {message && (
+                            <div style={styles.successMessage}>
+                                <span>✓</span>
+                                <span>{message}</span>
+                            </div>
+                        )}
+                        
+                        <form onSubmit={handleSubmit} style={styles.form}>
+                            <div style={styles.inputGroup}>
+                                <label style={styles.inputLabel}>Email Address</label>
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    onFocus={() => setEmailFocused(true)}
+                                    onBlur={() => setEmailFocused(false)}
+                                    style={{
+                                        ...styles.input,
+                                        ...(emailFocused ? styles.inputFocus : {})
+                                    }}
+                                    placeholder="your.email@edu.in"
+                                    required
+                                />
+                                <div style={styles.emailHint}>Student email must end with edu.in</div>
+                            </div>
+                            
+                            <div style={styles.inputGroup}>
+                                <label style={styles.inputLabel}>Password</label>
+                                <input
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    onFocus={() => setPasswordFocused(true)}
+                                    onBlur={() => setPasswordFocused(false)}
+                                    style={{
+                                        ...styles.input,
+                                        ...(passwordFocused ? styles.inputFocus : {})
+                                    }}
+                                    placeholder="Enter your password"
+                                    required
+                                />
+                                <span 
+                                    style={styles.forgotPassword}
+                                    onClick={() => navigate('/reset-password')}
+                                >
+                                    Forgot Password?
+                                </span>
+                            </div>
+                            
+                            <button
+                                type="submit"
+                                style={styles.loginButton}
+                                onMouseEnter={(e) => {
+                                    e.target.style.backgroundColor = styles.loginButtonHover.backgroundColor;
+                                    e.target.style.transform = styles.loginButtonHover.transform;
+                                    e.target.style.boxShadow = styles.loginButtonHover.boxShadow;
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.target.style.backgroundColor = styles.loginButton.backgroundColor;
+                                    e.target.style.transform = 'translateY(0)';
+                                    e.target.style.boxShadow = 'none';
+                                }}
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <>
+                                        <div style={{
+                                            ...styles.spinner,
+                                            animation: 'spin 0.8s linear infinite'
+                                        }}></div>
+                                        <style>
+                                            {`
+                                                @keyframes spin {
+                                                    0% { transform: rotate(0deg); }
+                                                    100% { transform: rotate(360deg); }
+                                                }
+                                            `}
+                                        </style>
+                                        <span>Signing In...</span>
+                                    </>
+                                ) : 'Sign In'}
+                            </button>
+                        </form>
+                        
+                        <div style={styles.footer}>
+                            <p style={styles.footerText}>
+                                Don't have an account? 
+                                <span 
+                                    style={styles.footerLink}
+                                    onClick={() => navigate('/')}
+                                > Register Now</span>
+                            </p>
+                            
+                            <div 
+                                style={styles.roleLink}
+                                onClick={() => navigate('/login')}
+                            >
+                                <span>←</span>
+                                <span>Back to role selection</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

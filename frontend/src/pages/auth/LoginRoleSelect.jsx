@@ -1,106 +1,91 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import studentImage from '../../assets/student1.webp'; // Adjust the path if needed
-import teacherImage from '../../assets/teacher.webp';
-import adminImage from '../../assets/admin.png';
+import './LoginRoleSelect.css'; // Make sure to create this CSS file
 
 const LoginRoleSelect = () => {
-    const containerStyle = {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-start', // Align to top
-        height: '100vh', // Full viewport height
-        backgroundColor: '#FFDC7F', // Light yellow background
-        padding: '40px',
-    };
-
-    const titleStyle = {
-        fontSize: '40px',
-        fontWeight: 'bold',
-        marginBottom: '60px', // Increased gap below the title
-        color: '#0F67B1', // Blue color for the title
-        marginTop: '20px', // Add some space from the top
-    };
-
-
-    const roleLinksContainerStyle = {
-        display: 'flex', // Align boxes horizontally
-        justifyContent: 'center',
-        gap: '40px', // Increase space between the boxes
-    };
-
-    const linkStyle = {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#0F67B1',
-        fontSize: '20px',
-        textDecoration: 'none',
-        border: '3px solid #16325B',
-        padding: '30px',
-        borderRadius: '15px',
-        transition: 'background-color 0.3s, color 0.3s, transform 0.3s', // Add smooth scaling effect
-        backgroundColor: '#FFFFFF', // White background for buttons
-        textAlign: 'center', // Center text inside the boxes
-        width: '200px', // Bigger width for the role containers
-        height: '250px', // Bigger height for the role containers
-        boxShadow: '0 8px 20px rgba(0, 0, 0, 0.15)', // Subtle shadow for buttons
-    };
-
-    const imageStyle = {
-        width: '100px', // Larger image size
-        height: '100px',
-        marginBottom: '15px',
-    };
-
-    const handleMouseEnter = (e) => {
-        e.target.style.backgroundColor = '#0F67B1';
-        e.target.style.color = 'white';
-        e.target.style.transform = 'scale(1.05)'; // Slight scale-up effect on hover
-    };
-
-    const handleMouseLeave = (e) => {
-        e.target.style.backgroundColor = '#FFFFFF';
-        e.target.style.color = '#0F67B1';
-        e.target.style.transform = 'scale(1)'; // Reset scale when hover is removed
-    };
-
-    return (
-        <div style={containerStyle}>
-            <h2 style={titleStyle}>Select Your Role</h2>
-            <div style={roleLinksContainerStyle}>
-                <Link
-                    to="/login/student"
-                    style={linkStyle}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    <img src={studentImage} alt="Student" style={imageStyle} />
-                    Student Login
-                </Link>
-                <Link
-                    to="/login/teacher"
-                    style={linkStyle}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    <img src={teacherImage} alt="Teacher" style={imageStyle} />
-                    Teacher Login
-                </Link>
-                <Link
-                    to="/login/admin"
-                    style={linkStyle}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    <img src={adminImage} alt="Admin" style={imageStyle} />
-                    Admin Login
-                </Link>
-            </div>
+  return (
+    <div className="role-selection-page">
+      <div className="role-selection-container">
+        <div className="role-selection-header">
+          <h1>Select Your Role</h1>
+          <p>Choose the appropriate role to access your dashboard</p>
         </div>
-    );
+        
+        <div className="role-cards-container">
+          <Link to="/login/student" className="role-card">
+            <div className="role-card-inner">
+              <div className="role-icon student-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 15C15.3137 15 18 12.3137 18 9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9C6 12.3137 8.68629 15 12 15Z" fill="currentColor" fillOpacity="0.2"/>
+                  <path d="M12 15C15.3137 15 18 12.3137 18 9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9C6 12.3137 8.68629 15 12 15Z" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M3 20.25C3 16.7982 6.79822 14 12 14C17.2018 14 21 16.7982 21 20.25V21H3V20.25Z" fill="currentColor" fillOpacity="0.2"/>
+                  <path d="M3 20.25C3 16.7982 6.79822 14 12 14C17.2018 14 21 16.7982 21 20.25V21H3V20.25Z" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+              </div>
+              <h3>Student</h3>
+              <p>Access courses, assignments, and track your academic progress</p>
+              <div className="card-hover-effect"></div>
+            </div>
+          </Link>
+          
+          <Link to="/login/teacher" className="role-card">
+            <div className="role-card-inner">
+              <div className="role-icon teacher-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6H19C20.1 6 21 6.9 21 8V18C21 19.1 20.1 20 19 20H5C3.9 20 3 19.1 3 18V8C3 6.9 3.9 6 5 6H6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M18 6H6V4C6 2.9 6.9 2 8 2H16C17.1 2 18 2.9 18 4V6Z" fill="currentColor" fillOpacity="0.2"/>
+                  <path d="M18 6H6V4C6 2.9 6.9 2 8 2H16C17.1 2 18 2.9 18 4V6Z" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M12 11H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M12 15H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M8 11H8.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M8 15H8.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <h3>Teacher</h3>
+              <p>Manage classes, create assignments, and track student performance</p>
+              <div className="card-hover-effect"></div>
+            </div>
+          </Link>
+          
+          <Link to="/login/admin" className="role-card">
+            <div className="role-card-inner">
+              <div className="role-icon admin-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 15C15.3137 15 18 12.3137 18 9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9C6 12.3137 8.68629 15 12 15Z" fill="currentColor" fillOpacity="0.2"/>
+                  <path d="M12 15C15.3137 15 18 12.3137 18 9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9C6 12.3137 8.68629 15 12 15Z" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M3 20.25C3 16.7982 6.79822 14 12 14C17.2018 14 21 16.7982 21 20.25V21H3V20.25Z" fill="currentColor" fillOpacity="0.2"/>
+                  <path d="M3 20.25C3 16.7982 6.79822 14 12 14C17.2018 14 21 16.7982 21 20.25V21H3V20.25Z" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M9 9L15 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M12 6L12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <h3>Admin</h3>
+              <p>Manage users, configure settings, and oversee the entire platform</p>
+              <div className="card-hover-effect"></div>
+            </div>
+          </Link>
+        </div>
+        
+        <div className="back-to-home-link">
+          <Link to="/">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 12H5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Back to Home
+          </Link>
+        </div>
+      </div>
+      
+      {/* Decorative elements */}
+      <div className="decorative-circles">
+        <div className="circle circle-1"></div>
+        <div className="circle circle-2"></div>
+        <div className="circle circle-3"></div>
+        <div className="circle circle-4"></div>
+      </div>
+    </div>
+  );
 };
 
 export default LoginRoleSelect;

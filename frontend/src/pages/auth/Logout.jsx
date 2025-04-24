@@ -1,44 +1,59 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux'; // Assuming you're using Redux to manage authentication state
-import { logoutUser } from '../../redux/slices/authSlice'; // Adjust the path if needed
-import { Box, Typography, CircularProgress } from '@mui/material';
-
 
 const Logout = () => {
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    // Clear authentication data
+    localStorage.removeItem('authToken');
+    sessionStorage.removeItem('authToken');
+    
+    // Redirect to login after a short delay
+    const timer = setTimeout(() => {
+      navigate('/login');
+    }, 2000);
+    
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
-    useEffect(() => {
-        // Clear authentication data (e.g., token) from localStorage or sessionStorage
-        localStorage.removeItem('authToken'); // Adjust key based on your token storage
-        sessionStorage.removeItem('authToken'); // Clear if stored in sessionStorage
-
-        // Dispatch a Redux action to clear authentication state
-        dispatch(logoutUser());
-
-        // Redirect the user to the login page after logout
-        setTimeout(() => {
-            navigate('/login'); // Adjust the path to your login route
-        }, 1000); // Optional delay before redirecting
-    }, [navigate, dispatch]);
-
-    return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-            }}
-        >
-            <Typography variant="h6" gutterBottom>
-                Logging out...
-            </Typography>
-            <CircularProgress /> {/* Spinner to show the process */}
-        </Box>
-    );
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100vh',
+      background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+    }}>
+      <div style={{
+        background: 'white',
+        padding: '30px',
+        borderRadius: '10px',
+        textAlign: 'center',
+        boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)'
+      }}>
+        <h2>Logging Out</h2>
+        <p>You have been logged out successfully.</p>
+        <p>Redirecting to login page...</p>
+        <div style={{
+          width: '40px',
+          height: '40px',
+          margin: '20px auto',
+          border: '4px solid #f0f0f0',
+          borderTop: '4px solid #f5576c',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite'
+        }}></div>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    </div>
+  );
 };
 
 export default Logout;
