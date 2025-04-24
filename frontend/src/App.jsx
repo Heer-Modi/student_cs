@@ -41,6 +41,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import TeacherHeader from './components/TeacherHeader';
 import AdminHeader from './components/AdminHeader'; // New Admin Header
+import MeetingList from './pages/teacher/MeetingList';
 
 function AppContent() {
   const location = useLocation();
@@ -111,7 +112,7 @@ function AppContent() {
         /* Teacher Routes */
           <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
           <Route path="/teacher/arrange-meetings" element={<ArrangeMeetingsPage />} />
-          <Route path="/teacher/meeting-attendance" element={<MeetingAttendancePage />} />
+          <Route path="/teacher/meetings" element={<MeetingList />} />
           <Route path="/teacher/meeting-attendance/:meetingId" element={<MeetingAttendancePage />} />
           <Route path="/teacher/upload-documents" element={<UploadDocumentsPage />} />
           <Route path="/teacher/create-google-form" element={<CreateGoogleFormPage />} />

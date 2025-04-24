@@ -152,3 +152,17 @@ exports.downloadAttendanceExcel = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.getMeetings = async (req, res) => {
+  try {
+    const teacherId = req.user.id;
+    const meetings = await Meeting.find({ teacher: teacherId })
+      // .populate("attendance.student", "name rollNumber")
+      .sort({ date: -1 }); 
+
+    res.status(200).json(meetings);
+  } catch (error) {
+    console.error("Error fetching meetings:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}

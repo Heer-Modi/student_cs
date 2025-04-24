@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { Box, TextField, CssBaseline, Toolbar, Drawer, Snackbar, Alert, Typography, IconButton, Button } from "@mui/material";
+import {
+  Box,
+  TextField,
+  CssBaseline,
+  Toolbar,
+  Drawer,
+  Snackbar,
+  Alert,
+  Typography,
+  IconButton,
+  Button,
+} from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import TeacherSideBar from "../../components/TeacherSidebar";
@@ -14,24 +25,32 @@ const ArrangeMeetingsPage = () => {
   const [time, setTime] = useState("");
   const [agenda, setAgenda] = useState("");
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const [isSuccessful, setIsSuccessful] = useState(false);
   const navigate = useNavigate();
 
   const toggleDrawer = () => setOpen(!open);
-  const handleCloseNotification = () => setNotificationOpen(false);
+  const handleCloseNotification = () => navigate("/teacher/dashboard");
 
   const handleArrangeMeeting = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post("/api/meetings/create-meeting", { date, time, agenda }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.post(
+        "/api/meetings/create-meeting",
+        { date, time, agenda },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-       navigate(`/teacher/meeting-attendance/${response.data.meetingId}`);
-      console.log("Meeting arranged successfully:", response.data);
       
+      console.log("Meeting arranged successfully:", response.data);
+      setIsSuccessful(true);
+
       setNotificationOpen(true);
     } catch (error) {
       console.error("Error scheduling meeting:", error);
+      setIsSuccessful(false);
+      setNotificationOpen(true);
     }
   };
 
@@ -82,7 +101,11 @@ const ArrangeMeetingsPage = () => {
               fullWidth
               sx={{ marginBottom: 2 }}
             />
-            <Button variant="contained" sx={styles.button} onClick={handleArrangeMeeting}>
+            <Button
+              variant="contained"
+              sx={styles.button}
+              onClick={handleArrangeMeeting}
+            >
               Schedule Meeting
             </Button>
           </form>
@@ -90,10 +113,21 @@ const ArrangeMeetingsPage = () => {
       </Box>
 
       {/* Snackbar for success message */}
-      <Snackbar open={notificationOpen} autoHideDuration={6000} onClose={handleCloseNotification} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
-        <Alert onClose={handleCloseNotification} severity="success">
-          Meeting arranged successfully!
-        </Alert>
+      <Snackbar
+        open={notificationOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseNotification}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        {isSuccessful ? (
+          <Alert onClose={handleCloseNotification} severity="success">
+            Meeting arranged successfully!
+          </Alert>
+        ) : (
+          <Alert onClose={handleCloseNotification} severity="error">
+            Failed to arrange meeting. Please try again.
+          </Alert>
+        )}
       </Snackbar>
     </Box>
   );

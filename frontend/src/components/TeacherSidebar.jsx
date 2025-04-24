@@ -51,6 +51,13 @@ const TeacherSideBar = ({ open }) => {
         </ListItemIcon>
         <ListItemText primary="View Queries" sx={styles.text} />
       </ListItem>
+
+      <ListItem button component={Link} to="/teacher/meetings" sx={styles.listItem}>
+        <ListItemIcon>
+          <ReportProblemIcon sx={styles.icon} />
+        </ListItemIcon>
+        <ListItemText primary="Your Meetings" sx={styles.text} />
+      </ListItem>
     </List>
   );
 };

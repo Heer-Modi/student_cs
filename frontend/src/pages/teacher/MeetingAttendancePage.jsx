@@ -20,6 +20,7 @@ const MeetingAttendancePage = () => {
   const { meetingId } = useParams();
   const [open, setOpen] = useState(true);
   const [meeting, setMeeting] = useState(null);
+  const [students, setStudents] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -27,11 +28,15 @@ const MeetingAttendancePage = () => {
       .get(`/api/meetings/${meetingId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => setMeeting(res.data));
-  }, [meetingId]);
-
-  const toggleDrawer = () => setOpen(!open);
-
+      .then((res) => {
+        setMeeting(res.data);
+        console.log("Meeting data fetched successfully:", res.data);
+        setStudents(res.data?.attendance);
+      });
+    }, [meetingId]);
+    
+    const toggleDrawer = () => setOpen(!open);
+    
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <CssBaseline />
@@ -59,14 +64,43 @@ const MeetingAttendancePage = () => {
                 Date: {meeting.date} | Time: {meeting.time}
               </Typography>
               <Typography>Agenda: {meeting.agenda}</Typography>
-              <Button
+              {/* <Button
                 variant="contained"
                 sx={styles.button}
                 href={`/api/meetings/download/${meetingId}`}
                 download
               >
                 Download Attendance Excel
-              </Button>
+              </Button> */}
+              {
+              students.map((student) => (
+                <div key={student._id} style={{ margin: "10px 0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <Typography variant="body1">
+                    {student.student.name} ({student.student.rollNumber})
+                  </Typography>
+                  <input
+                    type="checkbox"
+                    checked={student.attended}
+                    onChange={() => {
+                      const updatedAttendance = meeting.attendance.map((s) =>
+                        s._id === student._id
+                          ? { ...s, attended: !s.attended }
+                          : s
+                      );
+                      setMeeting({ ...meeting, attendance: updatedAttendance });
+                    }}
+                  />
+                </div>
+              ))
+            }
+
+            <Button
+                variant="contained"
+                sx={styles.button}
+
+                >
+                Save Attendance
+            </Button>
             </>
           )}
         </div>

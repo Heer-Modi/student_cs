@@ -20,4 +20,6 @@ router.post("/attendance", verifyToken, isTeacher, meetingController.saveAttenda
 // ✅ Download Attendance as Excel
 router.get("/download/:meetingId", verifyToken, isTeacher, meetingController.downloadAttendanceExcel);
 
+router.get("/", verifyToken, isTeacher, meetingController.getMeetings);
+
 module.exports = router;
