@@ -22,7 +22,6 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import ComplaintsManagement from './pages/admin/ComplaintsManagement';
 import AdminNoticeManagement from './pages/admin/AdminNoticeManagement';
-
 import AdminProfile from './pages/admin/AdminProfile';
 
 // Common Components
@@ -40,12 +39,12 @@ import Logout from './pages/auth/Logout';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import TeacherHeader from './components/TeacherHeader';
-import AdminHeader from './components/AdminHeader'; // New Admin Header
+import AdminHeader from './components/AdminHeader';
 import MeetingList from './pages/teacher/MeetingList';
 
 function AppContent() {
   const location = useLocation();
-  const [profilePhoto, setProfilePhoto] = useState(localStorage.getItem('profilePhoto')); // Profile photo state
+  const [profilePhoto, setProfilePhoto] = useState(localStorage.getItem('profilePhoto'));
 
   const refreshProfilePhoto = (newPhotoUrl) => {
     if (newPhotoUrl) {
@@ -54,28 +53,10 @@ function AppContent() {
     }
   };
 
-  // Define routes for teacher and admin
-  const teacherRoutes = [
-    '/teacher/dashboard',
-    '/teacher/arrange-meetings',
-    '/teacher/metting-attendance',
-    '/teacher/upload-documents',
-    '/teacher/create-google-form',
-    '/teacher/profile',
-    '/teacher/notifications',
-    '/teacher/yourstudents',
-    '/teacher/queries'
-  ];
-
-  const adminRoutes = [
-    '/admin/dashboard',
-    '/admin/user-management',
-    '/admin/complaints-management',
-    '/admin/notice-managment',
-    
-    '/admin/profile'
-  ];
-
+  // Simplified approach to determine which header to display
+  const showTeacherHeader = location.pathname.startsWith('/teacher/');
+  const showAdminHeader = location.pathname.startsWith('/admin/');
+  
   const noHeaderFooterRoutes = [
     '/',
     '/login',
@@ -88,20 +69,18 @@ function AppContent() {
     '/admin/dashboard'
   ];
 
-  // Determine which header to display
-  const showTeacherHeader = teacherRoutes.includes(location.pathname);
-  const showAdminHeader = adminRoutes.includes(location.pathname);
   const showHeaderFooter = !noHeaderFooterRoutes.includes(location.pathname);
 
   return (
     <>
       <CssBaseline />
       {/* Conditionally render headers */}
-      {showHeaderFooter && (showAdminHeader ? 
-        <AdminHeader profilePhoto={profilePhoto} /> : 
-        showTeacherHeader ? 
-          <TeacherHeader profilePhoto={profilePhoto} /> : 
-          <Header profilePhoto={profilePhoto} />
+      {showHeaderFooter && (
+        showAdminHeader ? 
+          <AdminHeader profilePhoto={profilePhoto} /> : 
+          showTeacherHeader ? 
+            <TeacherHeader profilePhoto={profilePhoto} title={getPageTitle(location.pathname)} open={true} /> : 
+            <Header profilePhoto={profilePhoto} />
       )}
 
       <Routes>
@@ -109,24 +88,23 @@ function AppContent() {
         <Route path="/student/profile" element={<StudentProfile refreshProfilePhoto={refreshProfilePhoto} />} />
         <Route path="/student/dashboard" element={<StudentDashboard />} />
 
-        /* Teacher Routes */
-          <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
-          <Route path="/teacher/arrange-meetings" element={<ArrangeMeetingsPage />} />
-          <Route path="/teacher/meetings" element={<MeetingList />} />
-          <Route path="/teacher/meeting-attendance/:meetingId" element={<MeetingAttendancePage />} />
-          <Route path="/teacher/upload-documents" element={<UploadDocumentsPage />} />
-          <Route path="/teacher/create-google-form" element={<CreateGoogleFormPage />} />
-          <Route path="/teacher/profile" element={<TeacherProfile />} />
-          <Route path="/teacher/notifications" element={<TeacherNotifications />} />
-          <Route path="/teacher/yourstudents" element={<YourStudents />} />
-          <Route path="/teacher/queries" element={<TeacherQueries />} />
+        {/* Teacher Routes */}
+        <Route path="/teacher/dashboard/*" element={<TeacherDashboard />} />
+        <Route path="/teacher/arrange-meetings" element={<ArrangeMeetingsPage />} />
+        <Route path="/teacher/meetings" element={<MeetingList />} />
+        <Route path="/teacher/meeting-attendance/:meetingId" element={<MeetingAttendancePage />} />
+        <Route path="/teacher/upload-documents" element={<UploadDocumentsPage />} />
+        <Route path="/teacher/create-google-form" element={<CreateGoogleFormPage />} />
+        <Route path="/teacher/profile" element={<TeacherProfile />} />
+        <Route path="/teacher/notifications" element={<TeacherNotifications />} />
+        <Route path="/teacher/yourstudents" element={<YourStudents />} />
+        <Route path="/teacher/queries" element={<TeacherQueries />} />
 
-          {/* Admin Routes */}
+        {/* Admin Routes */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/user-management" element={<UserManagement />} />
         <Route path="/admin/complaints-management" element={<ComplaintsManagement />} />
         <Route path="/admin/notice-managment" element={<AdminNoticeManagement />} />
-        
         <Route path="/admin/profile" element={<AdminProfile />} />
 
         {/* Common Routes */}
@@ -148,6 +126,22 @@ function AppContent() {
       {showHeaderFooter && <Footer />}
     </>
   );
+}
+
+// Helper function to determine page title based on path
+function getPageTitle(pathname) {
+  if (pathname.includes('/teacher/dashboard')) return 'Teacher Dashboard';
+  if (pathname.includes('/teacher/profile')) return 'Teacher Profile';
+  if (pathname.includes('/teacher/arrange-meetings')) return 'Arrange Meetings';
+  if (pathname.includes('/teacher/meetings')) return 'Your Meetings';
+  if (pathname.includes('/teacher/meeting-attendance')) return 'Meeting Attendance';
+  if (pathname.includes('/teacher/upload-documents')) return 'Upload Documents';
+  if (pathname.includes('/teacher/create-google-form')) return 'Create Form';
+  if (pathname.includes('/teacher/notifications')) return 'Notifications';
+  if (pathname.includes('/teacher/yourstudents')) return 'Your Students';
+  if (pathname.includes('/teacher/queries')) return 'Student Queries';
+  
+  return 'Teacher Portal'; // Default title
 }
 
 function App() {

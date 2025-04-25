@@ -55,32 +55,36 @@ const StudentSideBar = ({ open }) => {
 // Styles
 const styles = {
   drawerOpen: {
-    backgroundColor: "#3f51b5", // Dark blue for sidebar
-    color: "black",
+    background: 'linear-gradient(180deg, #38bdf8 0%, #0c4a6e 100%)', // Matching gradient from header/footer
+    color: "white",
     width: "240px",
     transition: "width 0.3s ease", // Smooth transition
     paddingTop: "20px",
+    height: '100%'
   },
   drawerClosed: {
-    backgroundColor: "#3f51b5",
-    color: "black",
+    background: 'linear-gradient(180deg, #38bdf8 0%, #0c4a6e 100%)', // Matching gradient
+    color: "white",
     width: "70px",
     transition: "width 0.3s ease", // Smooth transition when closed
     paddingTop: "20px",
+    height: '100%'
   },
   icon: {
-    color: "#f6d673", // Yellow icon for emphasis
+    color: "white", // White icons for better contrast
     fontSize: "1.5rem",
   },
   text: {
-    color: "#ffffff", // Light gray text for readability
+    color: "#ffffff", // White text for readability
     fontWeight: 500,
     transition: "opacity 0.3s ease",
   },
   listItem: {
     padding: "10px 20px",
     "&:hover": {
-      backgroundColor: "#14305d", // Slightly lighter on hover
+      backgroundColor: "rgba(255, 255, 255, 0.1)", // Lighter on hover with transparency
+      borderRadius: "8px",
+      margin: "0 8px"
     },
   },
 };

@@ -13,19 +13,31 @@ import {
   TableRow,
   Paper,
   IconButton,
-  Button
+  Button,
+  Chip,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Alert
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import CancelIcon from "@mui/icons-material/Cancel";
 import StudentSideBar from "./StudentSideBar";
 import axios from "axios";
 
 const drawerWidth = 240;
+const collapsedDrawerWidth = 70;
 
 const ComplaintView = () => {
   const [open, setOpen] = useState(true);
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [confirmDialog, setConfirmDialog] = useState({ open: false, id: null });
+  const [cancelling, setCancelling] = useState(false);
+  const [error, setError] = useState("");
 
   const toggleDrawer = () => setOpen(!open);
 
@@ -33,6 +45,7 @@ const ComplaintView = () => {
   useEffect(() => {
     const fetchComplaints = async () => {
       try {
+        setLoading(true);
         const response = await axios.get("/api/complaints/student-complaints", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -40,9 +53,10 @@ const ComplaintView = () => {
         });
 
         setComplaints(response.data);
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching complaints:", error);
+        setError("Failed to load queries. Please try again later.");
+      } finally {
         setLoading(false);
       }
     };
@@ -50,95 +64,75 @@ const ComplaintView = () => {
     fetchComplaints();
   }, []);
 
+  // Function to handle dialog open
+  const handleOpenCancelDialog = (complaintId) => {
+    setConfirmDialog({ open: true, id: complaintId });
+  };
+
+  // Function to handle dialog close
+  const handleCloseCancelDialog = () => {
+    setConfirmDialog({ open: false, id: null });
+  };
+
   // Function to cancel a complaint
-  const handleCancelComplaint = async (complaintId) => {
+  const handleCancelComplaint = async () => {
     try {
-      await axios.delete(`/api/complaints/cancel/student/${complaintId}`, {
+      setCancelling(true);
+      await axios.delete(`/api/complaints/cancel/student/${confirmDialog.id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
-      // ✅ Remove complaint from the state after successful deletion
-      setComplaints(complaints.filter((complaint) => complaint._id !== complaintId));
-      alert("Query canceled successfully.");
+      // Remove complaint from the state after successful deletion
+      setComplaints(complaints.filter((complaint) => complaint._id !== confirmDialog.id));
+      handleCloseCancelDialog();
     } catch (error) {
       console.error("Error canceling complaint:", error);
-      alert("Failed to cancel complaint.");
+      setError("Failed to cancel query. Please try again.");
+    } finally {
+      setCancelling(false);
     }
   };
 
-  const styles = {
-    container: {
-      margin: "0 auto",
-      maxWidth: open ? "90%" : "95%", // Expand content when sidebar is closed
-      padding: "20px",
-      textAlign: "center",
-    },
-    heading: {
-      marginBottom: "20px",
-      fontWeight: "bold",
-      color: "#10184b",
-    },
-    tableContainer: {
-      marginTop: "20px",
-      borderRadius: "10px",
-      overflow: "hidden",
-      boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-      width: open ? "100%" : "95%", // Expand table when sidebar is closed
-      transition: "width 0.3s ease",
-    },
-    tableHeader: {
-      backgroundColor: "#f6d673",
-      fontWeight: "bold",
-      color: "#10184b",
-    },
-    tableCell: {
-      color: "#10184b",
-      fontWeight: "500",
-    },
-    statusPending: {
-      color: "#d32f2f",
-      fontWeight: "bold",
-    },
-    statusResolved: {
-      color: "#2e7d32",
-      fontWeight: "bold",
-    },
-    cancelButton: {
-      backgroundColor: "#d32f2f",
-      color: "#fff",
-      "&:hover": {
-        backgroundColor: "#b71c1c",
-      },
-    },
-    mainContent: {
-      backgroundColor: "#f6f7f9",
-      flexGrow: 1,
-      padding: "24px",
-      overflow: "auto",
-      transition: "margin-left 0.3s ease, width 0.3s ease",
-      marginLeft: open ? `${drawerWidth}px` : "70px",
-      width: open ? `calc(100% - ${drawerWidth}px)` : "calc(100% - 70px)", // Expand content when sidebar is closed
-    },
-    drawerStyled: {
-      width: drawerWidth,
-      flexShrink: 0,
-      "& .MuiDrawer-paper": {
-        width: open ? drawerWidth : "70px",
-        transition: "width 0.3s ease",
-        overflowX: "hidden",
-      },
-    },
-  };
-
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+    <Box sx={{ 
+      display: 'flex', 
+      minHeight: '100vh',
+      backgroundColor: '#f5f7fa',
+      backgroundImage: 'radial-gradient(circle at 25% 25%, rgba(66, 153, 225, 0.1) 0%, transparent 45%), radial-gradient(circle at 75% 75%, rgba(237, 100, 166, 0.1) 0%, transparent 45%)',
+    }}>
       <CssBaseline />
+      
       {/* Sidebar */}
-      <Drawer variant="permanent" sx={styles.drawerStyled}>
-        <Toolbar>
-          <IconButton onClick={toggleDrawer}>
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: open ? drawerWidth : collapsedDrawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: open ? drawerWidth : collapsedDrawerWidth,
+            transition: 'width 0.3s ease',
+            overflowX: 'hidden',
+            boxShadow: '2px 0 10px rgba(0, 0, 0, 0.05)',
+            borderRight: 'none',
+          },
+        }}
+      >
+        <Toolbar sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'flex-end',
+          padding: '8px',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+        }}>
+          <IconButton onClick={toggleDrawer} sx={{
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            color: 'white',
+            '&:hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+            }
+          }}>
             {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </Toolbar>
@@ -146,69 +140,264 @@ const ComplaintView = () => {
       </Drawer>
 
       {/* Main content */}
-      <Box component="main" sx={styles.mainContent}>
+      <Box 
+        component="main" 
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: `calc(100% - ${open ? drawerWidth : collapsedDrawerWidth}px)`,
+          transition: 'margin-left 0.3s ease, width 0.3s ease',
+          marginLeft: 0,
+        }}
+      >
         <Toolbar />
-        <div style={styles.container}>
-          <Typography variant="h4" style={styles.heading}>
-            View Your Queries
-          </Typography>
+        
+        <Paper 
+          elevation={0}
+          sx={{
+            width: '100%',
+            margin: '0 auto',
+            mt: 2,
+            backgroundColor: 'white',
+            borderRadius: '16px',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
+            overflow: 'hidden'
+          }}
+        >
+          <Box sx={{
+            background: 'linear-gradient(135deg, #38bdf8 0%, #0c4a6e 100%)',
+            color: 'white',
+            padding: '24px 32px',
+            borderBottom: '1px solid #E2E8F0',
+          }}>
+            <Typography variant="h4" sx={{
+              fontSize: '28px',
+              fontWeight: '700',
+              mb: 1
+            }}>
+              Your Queries
+            </Typography>
+            <Typography variant="body1" sx={{ opacity: 0.9 }}>
+              View and manage all your submitted queries
+            </Typography>
+          </Box>
+          
+          <Box sx={{ p: 3 }}>
+            {error && (
+              <Alert 
+                severity="error" 
+                sx={{ mb: 3, borderRadius: '8px' }}
+                onClose={() => setError("")}
+              >
+                {error}
+              </Alert>
+            )}
 
-          {loading ? (
-            <Typography>Loading Queries...</Typography>
-          ) : complaints.length === 0 ? (
-            <Typography>No queries submitted yet.</Typography>
-          ) : (
-            <TableContainer component={Paper} sx={styles.tableContainer}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={styles.tableHeader}>Query</TableCell>
-                    <TableCell sx={styles.tableHeader}>To</TableCell>
-                    <TableCell sx={styles.tableHeader}>Status</TableCell>
-                    <TableCell sx={styles.tableHeader}>Teacher Response</TableCell>
-                    <TableCell sx={styles.tableHeader}>Action</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {complaints.map((complaint) => (
-                    <TableRow key={complaint._id}>
-                      <TableCell sx={styles.tableCell}>{complaint.description}</TableCell>
-                      <TableCell sx={styles.tableCell}>
-                        {complaint.complaintTo?.name || "Unknown"}
+            {loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 5 }}>
+                <CircularProgress sx={{ color: '#3182CE' }} />
+              </Box>
+            ) : complaints.length === 0 ? (
+              <Box 
+                sx={{ 
+                  backgroundColor: '#EBF8FF', 
+                  p: 4, 
+                  borderRadius: '8px',
+                  textAlign: 'center',
+                  color: '#2C5282',
+                  border: '1px dashed #90CDF4'
+                }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>No Queries Found</Typography>
+                <Typography>You haven't submitted any queries yet.</Typography>
+              </Box>
+            ) : (
+              <TableContainer sx={{ boxShadow: 'none' }}>
+                <Table sx={{ minWidth: 650 }}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ 
+                        fontSize: '14px', 
+                        fontWeight: '600', 
+                        color: '#4A5568',
+                        borderBottom: '2px solid #E2E8F0'
+                      }}>
+                        Query
                       </TableCell>
-                      <TableCell sx={complaint.status === "Resolved" ? styles.statusResolved : styles.statusPending}>
-                        {complaint.status}
+                      <TableCell sx={{ 
+                        fontSize: '14px', 
+                        fontWeight: '600', 
+                        color: '#4A5568',
+                        borderBottom: '2px solid #E2E8F0'
+                      }}>
+                        To
                       </TableCell>
-                      <TableCell>
-                        {complaint.response === "" ? (
-                          <Typography sx={styles.statusPending}>No response yet</Typography>
-                        ) :
-                        complaint.status === "Cancelled" ?
-                        (
-                          <Typography sx={styles.statusPending}><strong>{complaint.response}</strong></Typography>
-                        )
-                      : (
-                        <Typography sx={styles.statusResolved}><strong>{complaint.response}</strong></Typography>
-                      )
-                      }
+                      <TableCell sx={{ 
+                        fontSize: '14px', 
+                        fontWeight: '600', 
+                        color: '#4A5568',
+                        borderBottom: '2px solid #E2E8F0' 
+                      }}>
+                        Status
                       </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="contained"
-                          sx={styles.cancelButton}
-                          onClick={() => handleCancelComplaint(complaint._id)}
-                        >
-                          Cancel
-                        </Button>
+                      <TableCell sx={{ 
+                        fontSize: '14px', 
+                        fontWeight: '600', 
+                        color: '#4A5568',
+                        borderBottom: '2px solid #E2E8F0' 
+                      }}>
+                        Response
+                      </TableCell>
+                      <TableCell sx={{ 
+                        fontSize: '14px', 
+                        fontWeight: '600', 
+                        color: '#4A5568',
+                        borderBottom: '2px solid #E2E8F0' 
+                      }}>
+                        Action
                       </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-        </div>
+                  </TableHead>
+                  <TableBody>
+                    {complaints.map((complaint) => (
+                      <TableRow 
+                        key={complaint._id}
+                        sx={{ 
+                          '&:last-child td, &:last-child th': { border: 0 },
+                          '&:hover': { backgroundColor: '#F7FAFC' },
+                          transition: 'background-color 0.2s ease'
+                        }}
+                      >
+                        <TableCell sx={{ 
+                          color: '#2D3748',
+                          maxWidth: '250px',
+                          whiteSpace: 'normal',
+                          wordBreak: 'break-word'
+                        }}>
+                          {complaint.description}
+                        </TableCell>
+                        <TableCell sx={{ color: '#2D3748' }}>
+                          {complaint.complaintTo?.name || "Unknown"}
+                        </TableCell>
+                        <TableCell>
+                          <Chip 
+                            label={complaint.status} 
+                            size="small"
+                            sx={{
+                              backgroundColor: complaint.status === "Resolved" 
+                                ? '#C6F6D5' 
+                                : complaint.status === "Cancelled"
+                                ? '#FED7D7'
+                                : '#FEFCBF',
+                              color: complaint.status === "Resolved" 
+                                ? '#22543D' 
+                                : complaint.status === "Cancelled"
+                                ? '#822727'
+                                : '#744210',
+                              fontWeight: 600,
+                              fontSize: '12px'
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell sx={{ 
+                          maxWidth: '250px',
+                          whiteSpace: 'normal',
+                          wordBreak: 'break-word'
+                        }}>
+                          {complaint.response === "" ? (
+                            <Typography sx={{ 
+                              color: '#A0AEC0',
+                              fontStyle: 'italic',
+                              fontSize: '14px'
+                            }}>
+                              No response yet
+                            </Typography>
+                          ) : (
+                            <Typography sx={{ 
+                              color: '#2D3748',
+                              fontSize: '14px'
+                            }}>
+                              {complaint.response}
+                            </Typography>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            size="small"
+                            startIcon={<CancelIcon />}
+                            onClick={() => handleOpenCancelDialog(complaint._id)}
+                            sx={{
+                              borderRadius: '8px',
+                              textTransform: 'none',
+                              '&:hover': {
+                                backgroundColor: '#FED7D7',
+                              }
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </Box>
+        </Paper>
       </Box>
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={confirmDialog.open}
+        onClose={handleCloseCancelDialog}
+        PaperProps={{
+          sx: {
+            borderRadius: '12px',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          fontSize: '20px', 
+          fontWeight: 600,
+          color: '#E53E3E',
+          pb: 1
+        }}>
+          Cancel Query
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to cancel this query? This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 0 }}>
+          <Button 
+            onClick={handleCloseCancelDialog}
+            sx={{ 
+              textTransform: 'none',
+              color: '#4A5568'
+            }}
+          >
+            No, Keep It
+          </Button>
+          <Button 
+            onClick={handleCancelComplaint}
+            variant="contained"
+            color="error"
+            disabled={cancelling}
+            startIcon={cancelling && <CircularProgress size={20} color="inherit" />}
+            sx={{ 
+              textTransform: 'none',
+              borderRadius: '8px',
+            }}
+          >
+            {cancelling ? 'Cancelling...' : 'Yes, Cancel Query'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
