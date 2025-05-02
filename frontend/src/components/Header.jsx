@@ -108,10 +108,10 @@ const Header = ({ title, open, profilePhoto }) => {
               transition: 'all 0.2s ease',
             }}
           >
-            <Badge badgeContent={notifications} color="error">
+            {/*<Badge badgeContent={notifications} color="error">
               <NotificationsIcon sx={{ color: 'white' }} />
-            </Badge>
-          </IconButton>
+            </Badge> */ }
+          </IconButton> 
           
           <Box 
             sx={{ 

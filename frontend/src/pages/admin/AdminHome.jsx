@@ -1,46 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Card, CardContent } from '@mui/material';
+import { Box, Typography, Card, CardContent, Grid, Paper } from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
+import SchoolIcon from '@mui/icons-material/School';
 import axios from 'axios';
 
 const AdminHome = () => {
   const [dashboardData, setDashboardData] = useState({
     studentsCount: 0,
     teachersCount: 0,
-    
   });
-
-  // Common styles for the component
-  const styles = {
-    container: {
-      margin: '0 auto',
-      maxWidth: '700px',
-      padding: '20px',
-      textAlign: 'center',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '16px',
-    },
-    card: {
-      backgroundColor: '#f6d673',
-      color: '#10184b',
-      padding: '12px 16px',
-      textAlign: 'center',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    cardLabel: {
-      fontSize: '1.2rem',
-      fontWeight: 'bold',
-      textTransform: 'none',
-      color: '#10184b',
-    },
-    valueText: {
-      fontSize: '1.5rem',
-      fontWeight: 'bold',
-      color: '#3f51b5',
-    },
-  };
 
   // Fetch dashboard data
   useEffect(() => {
@@ -48,12 +16,17 @@ const AdminHome = () => {
       try {
         const response = await axios.get('/api/admin/dashboard', {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`, // Include token for auth
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
         setDashboardData(response.data.data);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
+        // Use placeholder data for development
+        setDashboardData({
+          studentsCount: 120,
+          teachersCount: 15,
+        });
       }
     };
 
@@ -61,32 +34,109 @@ const AdminHome = () => {
   }, []);
 
   return (
-    <Box sx={styles.container}>
-      
+    <Box sx={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <Paper
+        elevation={0}
+        sx={{
+          overflow: 'hidden',
+          borderRadius: '16px',
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
+          mb: 4
+        }}
+      >
+        <Box sx={{
+          background: 'linear-gradient(135deg, #4C2B87 0%, #2A1650 100%)',
+          color: 'white',
+          padding: '24px 32px',
+        }}>
+          <Typography variant="h4" sx={{
+            fontSize: '28px',
+            fontWeight: '700',
+            mb: 1
+          }}>
+            Admin Dashboard
+          </Typography>
+          <Typography variant="body1" sx={{ opacity: 0.9 }}>
+            Manage users, oversee platform activities, and configure system settings
+          </Typography>
+        </Box>
+        
+        <Box sx={{ p: 3 }}>
+          <Grid container spacing={3}>
+            {/* Students Card */}
+            <Grid item xs={12} md={6}>
+              <Card sx={{ 
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                borderRadius: '12px',
+                height: '100%'
+              }}>
+                <CardContent sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 3,
+                  padding: '24px' 
+                }}>
+                  <Box sx={{
+                    width: '70px',
+                    height: '70px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'rgba(76, 43, 135, 0.1)'
+                  }}>
+                    <SchoolIcon sx={{ color: '#4C2B87', fontSize: '35px' }} />
+                  </Box>
+                  <Box>
+                    <Typography sx={{ color: '#718096', fontSize: '16px', mb: 1 }}>
+                      Total Students
+                    </Typography>
+                    <Typography variant="h4" sx={{ color: '#2D3748', fontWeight: '700' }}>
+                      {dashboardData.studentsCount}
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
 
-      {/* Total Students */}
-      <Card sx={styles.card}>
-        <CardContent>
-          <Typography variant="h6" sx={styles.cardLabel}>
-            Total Students
-          </Typography>
-          <Typography variant="h5" sx={styles.valueText}>
-            {dashboardData.studentsCount}
-          </Typography>
-        </CardContent>
-      </Card>
-
-      {/* Total Faculty */}
-      <Card sx={styles.card}>
-        <CardContent>
-          <Typography variant="h6" sx={styles.cardLabel}>
-            Total Faculty
-          </Typography>
-          <Typography variant="h5" sx={styles.valueText}>
-            {dashboardData.teachersCount}
-          </Typography>
-        </CardContent>
-      </Card>
+            {/* Teachers Card */}
+            <Grid item xs={12} md={6}>
+              <Card sx={{ 
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                borderRadius: '12px',
+                height: '100%'
+              }}>
+                <CardContent sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 3,
+                  padding: '24px' 
+                }}>
+                  <Box sx={{
+                    width: '70px',
+                    height: '70px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'rgba(76, 43, 135, 0.1)'
+                  }}>
+                    <PersonIcon sx={{ color: '#4C2B87', fontSize: '35px' }} />
+                  </Box>
+                  <Box>
+                    <Typography sx={{ color: '#718096', fontSize: '16px', mb: 1 }}>
+                      Total Faculty
+                    </Typography>
+                    <Typography variant="h4" sx={{ color: '#2D3748', fontWeight: '700' }}>
+                      {dashboardData.teachersCount}
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Box>
+      </Paper>
     </Box>
   );
 };

@@ -20,14 +20,16 @@ import {
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import DownloadIcon from "@mui/icons-material/Download";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import SubjectIcon from "@mui/icons-material/Subject";
-import SaveIcon from "@mui/icons-material/Save";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import TeacherSideBar from "../../components/TeacherSidebar";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const drawerWidth = 240;
 const collapsedDrawerWidth = 70;
@@ -38,7 +40,7 @@ const MeetingAttendancePage = () => {
   const [open, setOpen] = useState(true);
   const [meeting, setMeeting] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -85,33 +87,46 @@ const MeetingAttendancePage = () => {
     
     setMeeting({ ...meeting, attendance: updatedAttendance });
   };
-  
-  const saveAttendance = async () => {
+
+  const downloadAttendanceExcel = () => {
     if (!meeting) return;
     
-    setSaving(true);
+    setDownloading(true);
+    
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.post(
-        `/api/meetings/update-attendance/${meetingId}`,
-        { attendance: meeting.attendance },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const data = meeting.attendance.map((entry) => ({
+        "Student Name": entry.student.name,
+        "Roll Number": entry.student.rollNumber,
+        "Status": entry.status,
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
+
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
+      const file = new Blob([excelBuffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(file, `Attendance_Meeting_${meetingId}.xlsx`);
       
       setSnackbar({
         open: true,
-        message: "Attendance saved successfully",
+        message: "Attendance sheet downloaded successfully",
         severity: "success"
       });
     } catch (error) {
-      console.error("Error saving attendance:", error);
+      console.error("Error generating Excel file:", error);
       setSnackbar({
         open: true,
-        message: "Failed to save attendance",
+        message: "Failed to download attendance sheet",
         severity: "error"
       });
     } finally {
-      setSaving(false);
+      setDownloading(false);
     }
   };
   
@@ -265,7 +280,7 @@ const MeetingAttendancePage = () => {
                   Meeting Attendance
                 </Typography>
                 <Typography variant="body1" sx={{ opacity: 0.9 }}>
-                  Mark and save attendance for this meeting
+                  Mark attendance and download the attendance sheet
                 </Typography>
               </Box>
               
@@ -383,7 +398,7 @@ const MeetingAttendancePage = () => {
                   ))}
                 </Box>
                 
-                {/* Action Buttons - only Save Attendance and Back to Meetings */}
+                {/* Action Buttons - Back to Meetings and Download Attendance Sheet */}
                 <Box sx={{ 
                   display: 'flex', 
                   justifyContent: 'center', 
@@ -410,9 +425,9 @@ const MeetingAttendancePage = () => {
                   
                   <Button
                     variant="contained"
-                    onClick={saveAttendance}
-                    disabled={saving}
-                    startIcon={saving ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
+                    onClick={downloadAttendanceExcel}
+                    disabled={downloading}
+                    startIcon={downloading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
                     sx={{
                       background: 'linear-gradient(135deg, #FF6B6B 0%, #8E2DE2 100%)',
                       borderRadius: '8px',
@@ -423,7 +438,7 @@ const MeetingAttendancePage = () => {
                       }
                     }}
                   >
-                    {saving ? 'Saving...' : 'Save Attendance'}
+                    {downloading ? 'Downloading...' : 'Download Attendance Sheet'}
                   </Button>
                 </Box>
               </Box>
